@@ -1,50 +1,36 @@
-# ANON
-안온 : 安溫 빈소 장례 및 디지털 추모 플랫폼
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## 1. 프로젝트 개요
-- **서비스 명**: 안온(安溫)
-- **서비스 성격**: 무빈소 장례 및 디지털 추모 플랫폼
-- **주요 목표**: 고인에 대한 추억 기록, 49제 기반의 천도 연출, 안전하고 투명한 부의금 및 추모 메시지 관리
+## Getting Started
 
-## 2. 설계 원칙 및 주요 특징
-개발 효율성과 데이터 신뢰도를 높이기 위해 다음 원칙을 준수합니다.
+First, run the development server:
 
-- **선언적 상태 관리**: 복잡한 `if-else` 조건문 대신 `FORM_STEPS`와 같은 [객체 리터럴](https://ko.wikipedia.org/wiki/%EB%A6%AC%ED%84%B0%EB%9F%B4)을 사용하여 입력 폼의 상태 전환을 투명하게 관리합니다.
-- **강력한 데이터 무결성**: 삭제된 메시지를 별도의 아카이브 테이블에 보관하여 [데이터 무결성](https://ko.wikipedia.org/wiki/%EB%8D%B0%EC%9D%B4%ED%84%B0_%EB%AC%B4%EA%B2%B0%EC%84%B1)을 유지하고 법적 분쟁 시 대응력을 확보합니다.
-- **심리적 UI 흐름**: 사용자의 슬픔을 배려하여 객관적 정보에서 감성적 기록으로 이어지는 입력 순서를 배치하고, 49제에 맞춘 '빛' 테마로 정서적 위로를 제공합니다.
-- **기술 최적화**: Supabase RLS [보안 정책](https://ko.wikipedia.org/wiki/%EB%B3%B4%EC%95%88_%EC%A0%95%EC%B1%85)을 통해 권한을 엄격히 분리하며, `Promise.all`을 이용한 병렬 업로드로 대용량 미디어 처리 성능을 극대화합니다.
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
----
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## 3. 입력 폼 상세 (심리적 단계별 구성)
-1. **관계 선택**: 고인과의 관계 설정 (가족, 친구, 동료 등)
-2. **기일 입력**: 별세하신 날짜 선택 (49제 계산의 기준점)
-3. **호칭 입력**: 고인이 사용자님을 부르던 호칭 (조사 판별 로직 포함)
-4. **성격 선택**: 고인의 평소 성격 키워드 선택
-5. **미디어 업로드**: 이미지(최대 20장) 및 영상 업로드 (Supabase Storage 활용)
-6. **부의금 설정**: 수령 여부 및 계좌 정보 입력 (QR 코드 생성 연동)
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
----
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## 4. 데이터베이스(DB) 및 인증 구조
-- **통합 인증**: 카카오톡, 네이버, 구글 OAuth 지원
-- **실명 기반 시스템**: 책임감 있는 추모 환경을 위해 인증된 실명 사용
-- **테이블 설계**: `Memorials`(기본 정보), `Media`(미디어 URL), `Comments`(추모 메시지)
+## Learn More
 
----
+To learn more about Next.js, take a look at the following resources:
 
-## 5. 핵심 기능 로직
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-### A. 지능형 폼 제어
-- **즉시 이동**: 항목 선택 시 자동 다음 단계 전환
-- **강제 환원**: 누락 항목 발견 시 가장 빠른 미완료 단계로 즉시 이동
-- **이중 컨펌**: 완료 전 내용 재확인 및 부의금 설정 관련 경고 노출
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-### B. 49제 천도 및 연출
-- **D-Day 판별**: 자바스크립트 `Date` 객체 기반 로직
-- **특수 테마**: 49제 도래 시 '빛' 중심의 인터랙티브 UI 적용
-- **미디어 스와이퍼**: `Swiper.js`를 이용한 부드러운 추억 회상 경험 제공
+## Deploy on Vercel
 
-### C. 부의금 관리
-- **QR 생성**: 계좌 정보 연동 비대면 부의금 수령
-- **범용성**: 생성된 QR 이미지의 로컬 저장 기능 지원
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
