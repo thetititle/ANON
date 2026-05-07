@@ -1,0 +1,43 @@
+.wrapper {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.sizer {
+  display: inline-grid;
+  max-width: 75%;
+}
+
+/* 입력값 길이만큼 너비 확보 (입력값 없으면 placeholder 기준) */
+.sizer::after {
+  content: attr(data-value) ' ';
+  visibility: hidden;
+  grid-area: 1 / 1;
+  white-space: pre-wrap;
+  padding: 12px 16px;
+  font: var(--text-body) 'Pretendard', sans-serif;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+}
+
+.input {
+  grid-area: 1 / 1;
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--foreground);
+  font: var(--text-body) 'Pretendard', sans-serif;
+  border-bottom-right-radius: 2px;
+  outline: none;
+}
+
+.input:focus {
+  border-color: var(--primary);
+}
+
+.input::placeholder {
+  color: var(--foreground-muted);
+}

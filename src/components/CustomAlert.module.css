@@ -1,0 +1,50 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.dialog {
+  background: var(--background);
+  border-radius: var(--radius-md);
+  padding: 28px 24px 20px;
+  width: min(320px, calc(100% - 48px));
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.message {
+  font: var(--text-body) 'Pretendard', sans-serif;
+  color: var(--foreground);
+  line-height: 1.6;
+  word-break: keep-all;
+  text-align: center;
+}
+
+.buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.button {
+  flex: 1;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  font-weight: 600;
+}
+
+.primary {
+  background: var(--primary);
+  color: #FAF8F5;
+}
+
+.secondary {
+  background: var(--surface);
+  color: var(--foreground-muted);
+}
