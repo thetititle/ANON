@@ -15,24 +15,32 @@ type Option = {
 type Props = {
   options: Option[]
   max?: number
+  onComplete?: () => void
 }
 
-export default function ChipSelect({ options, max = 1 }: Props) {
+export default function ChipSelect({ options, max = 1, onComplete }: Props) {
   const [selected, setSelected] = useState<string[]>([])
   const [showAlert, setShowAlert] = useState(false)
   const swiperRef = useRef<SwiperType | null>(null)
   const lastIndexRef = useRef<number>(-1)
+  const completedRef = useRef(false)
 
   function toggle(label: string, index: number) {
     if (selected.includes(label)) {
       setSelected(selected.filter((s) => s !== label))
     } else if (selected.length < max) {
-      setSelected([...selected, label])
+      const next = [...selected, label]
+      setSelected(next)
 
       if (swiperRef.current && lastIndexRef.current !== -1) {
         swiperRef.current.slideTo(index)
       }
       lastIndexRef.current = index
+
+      if (!completedRef.current) {
+        completedRef.current = true
+        onComplete?.()
+      }
     } else {
       setShowAlert(true)
     }

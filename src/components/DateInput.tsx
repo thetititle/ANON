@@ -1,10 +1,15 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import CustomAlert from './CustomAlert'
 import styles from './DateInput.module.css'
 
-export default function DateInput() {
+type Props = {
+  isActive?: boolean
+  onComplete?: () => void
+}
+
+export default function DateInput({ isActive, onComplete }: Props) {
   const [year, setYear]   = useState('')
   const [month, setMonth] = useState('')
   const [day, setDay]     = useState('')
@@ -13,6 +18,12 @@ export default function DateInput() {
   const yearRef  = useRef<HTMLInputElement>(null)
   const monthRef = useRef<HTMLInputElement>(null)
   const dayRef   = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (!isActive) return
+    const raf = requestAnimationFrame(() => yearRef.current?.focus())
+    return () => cancelAnimationFrame(raf)
+  }, [isActive])
 
   function onlyNumeric(value: string, max: number) {
     return value.replace(/\D/g, '').slice(0, max)
@@ -61,7 +72,7 @@ export default function DateInput() {
           message={`${year}년 ${month}월 ${day}일\n맞으신가요?`}
           buttons={[
             { label: '다시 입력', onClick: reset, variant: 'secondary' },
-            { label: '맞아요', onClick: () => setShowAlert(false), variant: 'primary' },
+            { label: '맞아요', onClick: () => { setShowAlert(false); onComplete?.() }, variant: 'primary' },
           ]}
         />
       )}

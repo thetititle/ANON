@@ -1,9 +1,10 @@
-export type StepType = 'text' | 'date' | 'chip' | 'yesno'
+export type StepType = 'text' | 'date' | 'chip' | 'yesno' | 'media'
 
 export type Step = {
   id: string
   question: string
   type: StepType
+  placeholder?: string
   options?: { label: string; icon?: string }[]
   max?: number
 }
@@ -29,6 +30,7 @@ export const FORM_STEPS: Step[] = [
     id: 'name',
     question: '고인의 성함이 어떻게 되시나요?',
     type: 'text',
+    placeholder: '',
   },
   {
     id: 'birth',
@@ -48,6 +50,11 @@ export const FORM_STEPS: Step[] = [
     max: 1,
   },
   {
+    id: 'media',
+    question: '고인의 생전 모습을 사진이나 영상으로 남겨주세요.',
+    type: 'media',
+  },
+  {
     id: 'personality',
     question: '고인의 성격을 골라주세요. (최대 3개)',
     type: 'chip',
@@ -58,6 +65,7 @@ export const FORM_STEPS: Step[] = [
     id: 'nickname',
     question: '고인께서 회원님을 어떻게 부르셨나요?',
     type: 'text',
+    placeholder: '',
   },
   {
     id: 'condolence',
