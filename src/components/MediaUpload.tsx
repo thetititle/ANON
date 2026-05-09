@@ -12,7 +12,7 @@ type MediaItem = {
 const MAX_IMAGES = 20
 
 type Props = {
-  onComplete?: () => void
+  onComplete?: (files: File[]) => void
 }
 
 export default function MediaUpload({ onComplete }: Props) {
@@ -35,12 +35,13 @@ export default function MediaUpload({ onComplete }: Props) {
       }
     }
 
+    const updated = [...items, ...next]
     setItems(prev => [...prev, ...next])
     e.target.value = ''
 
     if (next.length > 0 && !completedRef.current) {
       completedRef.current = true
-      onComplete?.()
+      onComplete?.(updated.map(i => i.file))
     }
   }
 
@@ -64,9 +65,15 @@ export default function MediaUpload({ onComplete }: Props) {
         className={styles.hidden}
       />
       {items.length === 0 ? (
-        <button className={styles.trigger} onClick={() => inputRef.current?.click()}>
-          사진 · 영상 추가
-        </button>
+        <div className={styles.empty}>
+          <div className={styles.actions}>
+            <button className={styles.skip} onClick={() => onComplete?.([])}>건너뛰기</button>
+            <button className={styles.trigger} onClick={() => inputRef.current?.click()}>
+              사진 · 영상 추가
+            </button>
+          </div>
+          <p className={styles.hint}>사진이 없으면 추모 페이지에 표시되지 않아요</p>
+        </div>
       ) : (
         <div className={styles.grid}>
           {items.map((item, i) => (

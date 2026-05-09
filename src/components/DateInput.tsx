@@ -6,14 +6,34 @@ import styles from './DateInput.module.css'
 
 type Props = {
   isActive?: boolean
-  onComplete?: () => void
+  onComplete?: (value: string) => void
+  minDate?: string
 }
 
-export default function DateInput({ isActive, onComplete }: Props) {
+function validateDate(y: string, m: string, d: string, minDate?: string): string | null {
+  const year = parseInt(y)
+  const month = parseInt(m)
+  const day = parseInt(d)
+  const currentYear = new Date().getFullYear()
+
+  if (year < 1900 || year > currentYear) return `연도는 1900~${currentYear} 사이로 입력해주세요.`
+  if (month < 1 || month > 12) return '월은 1~12 사이로 입력해주세요.'
+  const maxDay = new Date(year, month, 0).getDate()
+  if (day < 1 || day > maxDay) return `${month}월은 최대 ${maxDay}일까지 있어요.`
+  if (minDate) {
+    const entered = new Date(year, month - 1, day)
+    const min = new Date(minDate)
+    if (entered <= min) return '사망일은 생년월일 이후여야 합니다.'
+  }
+  return null
+}
+
+export default function DateInput({ isActive, onComplete, minDate }: Props) {
   const [year, setYear]   = useState('')
   const [month, setMonth] = useState('')
   const [day, setDay]     = useState('')
-  const [showAlert, setShowAlert] = useState(false)
+  const [alertState, setAlertState] = useState<'confirm' | 'error' | null>(null)
+  const [errorMsg, setErrorMsg] = useState('')
 
   const yearRef  = useRef<HTMLInputElement>(null)
   const monthRef = useRef<HTMLInputElement>(null)
@@ -44,7 +64,15 @@ export default function DateInput({ isActive, onComplete }: Props) {
   function handleDay(value: string) {
     const v = onlyNumeric(value, 2)
     setDay(v)
-    if (v.length === 2) setShowAlert(true)
+    if (v.length === 2) {
+      const err = validateDate(year, month, v, minDate)
+      if (err) {
+        setErrorMsg(err)
+        setAlertState('error')
+      } else {
+        setAlertState('confirm')
+      }
+    }
   }
 
   function handleKeyDown(
@@ -61,18 +89,26 @@ export default function DateInput({ isActive, onComplete }: Props) {
     setYear('')
     setMonth('')
     setDay('')
-    setShowAlert(false)
+    setAlertState(null)
     setTimeout(() => yearRef.current?.focus(), 0)
   }
 
   return (
     <>
-      {showAlert && (
+      {alertState === 'confirm' && (
         <CustomAlert
           message={`${year}년 ${month}월 ${day}일\n맞으신가요?`}
           buttons={[
             { label: '다시 입력', onClick: reset, variant: 'secondary' },
-            { label: '맞아요', onClick: () => { setShowAlert(false); onComplete?.() }, variant: 'primary' },
+            { label: '맞아요', onClick: () => { setAlertState(null); onComplete?.(`${year}-${month.padStart(2,'0')}-${day.padStart(2,'0')}`) }, variant: 'primary' },
+          ]}
+        />
+      )}
+      {alertState === 'error' && (
+        <CustomAlert
+          message={errorMsg}
+          buttons={[
+            { label: '다시 입력', onClick: reset, variant: 'primary' },
           ]}
         />
       )}

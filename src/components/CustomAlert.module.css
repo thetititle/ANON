@@ -18,6 +18,15 @@
   gap: 20px;
 }
 
+.note {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+  text-align: center;
+  line-height: 1.5;
+  margin: 0;
+  word-break: keep-all;
+}
+
 .message {
   font: var(--text-body) 'Pretendard', sans-serif;
   color: var(--foreground);

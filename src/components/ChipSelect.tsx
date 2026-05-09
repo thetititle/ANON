@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import type { Swiper as SwiperType } from 'swiper'
 import 'swiper/css'
@@ -15,31 +15,44 @@ type Option = {
 type Props = {
   options: Option[]
   max?: number
-  onComplete?: () => void
+  onComplete?: (value: string[]) => void
+  onChange?: (value: string[]) => void
+  confirmLabel?: string
 }
 
-export default function ChipSelect({ options, max = 1, onComplete }: Props) {
+export default function ChipSelect({ options, max = 1, onComplete, onChange, confirmLabel }: Props) {
   const [selected, setSelected] = useState<string[]>([])
+  const [confirmed, setConfirmed] = useState(false)
   const [showAlert, setShowAlert] = useState(false)
   const swiperRef = useRef<SwiperType | null>(null)
   const lastIndexRef = useRef<number>(-1)
   const completedRef = useRef(false)
+  const confirmRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (confirmLabel && selected.length === 1) {
+      requestAnimationFrame(() => confirmRef.current?.scrollIntoView({ block: 'end', behavior: 'smooth' }))
+    }
+  }, [selected.length, confirmLabel])
 
   function toggle(label: string, index: number) {
     if (selected.includes(label)) {
-      setSelected(selected.filter((s) => s !== label))
+      const next = selected.filter((s) => s !== label)
+      setSelected(next)
+      onChange?.(next)
     } else if (selected.length < max) {
       const next = [...selected, label]
       setSelected(next)
+      onChange?.(next)
 
       if (swiperRef.current && lastIndexRef.current !== -1) {
         swiperRef.current.slideTo(index)
       }
       lastIndexRef.current = index
 
-      if (!completedRef.current) {
+      if (!confirmLabel && !completedRef.current) {
         completedRef.current = true
-        onComplete?.()
+        onComplete?.(next)
       }
     } else {
       setShowAlert(true)
@@ -72,6 +85,22 @@ export default function ChipSelect({ options, max = 1, onComplete }: Props) {
         </SwiperSlide>
       ))}
     </Swiper>
+      {confirmLabel && selected.length > 0 && (
+        <div className={styles.footer} ref={confirmRef}>
+          <button
+            className={styles.confirm}
+            onClick={() => {
+              if (!completedRef.current) {
+                completedRef.current = true
+                setConfirmed(true)
+                onComplete?.(selected)
+              }
+            }}
+          >
+            {confirmed ? '선택 완료' : confirmLabel}
+          </button>
+        </div>
+      )}
     </>
   )
 }
