@@ -1,0 +1,81 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100dvh;
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 20px;
+  gap: 40px;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--foreground);
+  letter-spacing: -0.02em;
+}
+
+.hanja {
+  font-size: 0.875rem;
+  color: var(--foreground-muted);
+}
+
+.desc {
+  font: var(--text-body) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+  text-align: center;
+  word-break: keep-all;
+  line-height: 1.6;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.oauthBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  font: var(--text-body) 'Pretendard', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.oauthBtn:hover {
+  opacity: 0.85;
+}
+
+.kakao {
+  background: #FEE500;
+  color: #000000CC;
+}
+
+.google {
+  background: var(--surface);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+}
+
+.error {
+  font: var(--text-caption) 'Pretendard', sans-serif;
+  color: #E53E3E;
+  text-align: center;
+}
