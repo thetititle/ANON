@@ -132,14 +132,16 @@
 
 ### 3.1 5월 잔여 기간 (5월 17일 ~ 5월 31일) — 데이터 레이어 완성
 
-OAuth 인증이 완료된 상태이므로, 잔여 기간은 폼 제출 파이프라인과 추모 페이지 구현에 집중합니다.
+- **5/17 ~ 5/27** (완료)
+  - `proxy.ts` 무한 로딩 버그 수정 — `getUser()` → `getSession()` 교체 (매 요청마다 Supabase 서버 네트워크 호출 제거)
+  - 폼 제출 파이프라인 구현 — `memorials` INSERT + `memorial_media` Storage 업로드 (`Promise.all` 병렬 처리)
+  - `memorial-media` Storage 버킷 생성 (Public) + RLS 정책 적용 (INSERT/DELETE: 본인 추모 공간만)
+  - Kakao OAuth 설정 — 개발자 콘솔 앱 생성, 카카오 로그인 활성화, Redirect URI 등록, 닉네임 동의항목 설정, Supabase Provider 연동 완료
+  - **단, Kakao OAuth 실제 로그인 테스트 보류** — Kakao 앱 대표 도메인이 localhost를 허용하지 않아 KOE205 에러 발생. 실제 도메인 구입 후 테스트 가능
 
-- **5/17 ~ 5/22**
-  - 폼 제출 → `memorials` insert + `memorial_media` Supabase Storage 업로드 (`Promise.all` 병렬 처리)
-  - `memorial_legal_info` 테이블 생성 + RLS (행정 데이터 스키마 선점)
-  - `death-certificates` Storage 버킷 생성 (사망진단서 업로드 슬롯)
-- **5/23 ~ 5/31**
-  - RLS 정책 적용
+- **5/28 ~ 5/31** ← **다음 작업**
+  - 폼 제출 엔드-투-엔드 테스트 (Google 로그인 기반)
+  - `memorials` / `memorial_media` 테이블 RLS 정책 적용
   - 추모 페이지 `/memorial/[id]` 마크업 + 데이터 패칭
     - 고인 기본 정보 및 생존기간 표시
     - **디지털 앨범**: Swiper.js 슬라이더로 사진·영상 열람
@@ -174,9 +176,9 @@ OAuth 인증이 완료된 상태이므로, 잔여 기간은 폼 제출 파이프
 
 ## 4. 종합 현황 요약
 
-*(2026-05-16 기준 업데이트)*
+*(2026-05-28 기준 업데이트)*
 
-5월 10~16일 구간에서 폼 UX 고도화(Swiper 슬라이드 전환, 수정 모드, 요약 오버레이, localStorage 자동저장)와 OAuth 인증(Google, 실제 로그인 테스트 완료)이 예정보다 앞당겨 완료되었습니다. 현재 가장 시급한 과제는 **폼 제출 → `memorials` insert → Storage 업로드**로 이어지는 데이터 파이프라인을 닫는 작업입니다. 인증 레이어가 완성된 상태이므로 5월 잔여 기간 내 파이프라인 완성이 가능할 것으로 판단되며, 6월에는 49제 천도 연출과 Claude API 기반 정서적 메시지 생성 등 본 프로젝트의 차별화 요소에 집중할 수 있을 것으로 기대됩니다.
+5월 28일 기준, 폼 제출 파이프라인(`memorials` INSERT + Storage 업로드)과 Storage RLS 정책이 완성됐습니다. Kakao OAuth는 개발자 콘솔 설정까지 완료됐으나 localhost 도메인 제한으로 실제 테스트는 도메인 구입 후 진행해야 합니다 (Google 로그인은 정상 작동). 다음 세션에서 가장 먼저 할 작업은 **Google 로그인으로 폼 제출 엔드-투-엔드 테스트** → **`memorials` 테이블 RLS 적용** → **`/memorial/[id]` 추모 페이지 구현** 순서입니다.
 
 ---
 

@@ -9,7 +9,7 @@ export type FormData = {
   personality: string[]
   nickname: string
   condolence: boolean
-  bank: string[]
+  bank: string
   account: string
   account_holder: string
 }
