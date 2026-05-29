@@ -1,0 +1,156 @@
+.memorialHeader {
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px 20px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.homeLink {
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+  opacity: 0.5;
+  transition: opacity 0.15s ease;
+}
+
+.homeLink:hover {
+  opacity: 1;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.shareBtn {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.headerLogout {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+}
+
+.page {
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 20px 80px;
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 60px 0 40px;
+  gap: 10px;
+}
+
+.relationship {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+  letter-spacing: 0.05em;
+}
+
+.name {
+  font-size: 2.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+}
+
+.dates {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+  letter-spacing: 0.1em;
+}
+
+.nickname {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+  font-style: italic;
+  margin-top: 4px;
+}
+
+.section {
+  margin-top: 32px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.tag {
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+}
+
+/* Swiper */
+.slider {
+  width: 100%;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.mediaItem {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+}
+
+:global(.swiper-pagination-bullet) {
+  background: var(--foreground-muted);
+  opacity: 0.4;
+}
+
+:global(.swiper-pagination-bullet-active) {
+  background: var(--foreground);
+  opacity: 1;
+}
+
+.messageCard {
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  padding: 24px;
+}
+
+.salutation {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.messageText {
+  font: var(--text-body) 'Pretendard', sans-serif;
+  color: var(--foreground);
+  line-height: 1.8;
+  word-break: keep-all;
+  white-space: pre-line;
+  text-align: center;
+}
+
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 40px 0;
+}

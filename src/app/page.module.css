@@ -1,3 +1,123 @@
-.main {
-  cursor: pointer;
+.page {
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 20px;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 0 0;
+}
+
+.logo {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+}
+
+.hanja {
+  font-size: 0.75rem;
+  color: var(--foreground-muted);
+  letter-spacing: 0.1em;
+}
+
+.logoutBtn {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 0 32px;
+  gap: 16px;
+}
+
+.desc {
+  font: var(--text-body) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+}
+
+.label {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+  letter-spacing: 0.05em;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.memorialCard {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+  transition: opacity 0.15s ease;
+}
+
+.memorialCard:hover {
+  opacity: 0.6;
+}
+
+.cardName {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--foreground);
+  letter-spacing: -0.01em;
+}
+
+.cardMeta {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+}
+
+.empty {
+  font: var(--text-body) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+}
+
+.createBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: var(--foreground);
+  color: var(--background);
+  border-radius: var(--radius-md);
+  font: var(--text-body) 'Pretendard', sans-serif;
+  font-weight: 600;
+  transition: opacity 0.15s ease;
+  margin-top: auto;
+}
+
+.createBtn:hover {
+  opacity: 0.85;
+}
+
+.newMemorialLink {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+  margin-top: 24px;
+  align-self: flex-start;
+}
+
+.newMemorialLink:hover {
+  color: var(--foreground);
 }

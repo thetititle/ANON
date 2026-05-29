@@ -63,3 +63,83 @@
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+.restorePrompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 32px 0;
+  animation: fadeUp 0.25s ease;
+}
+
+.restoreText {
+  font: var(--text-body) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+  text-align: center;
+}
+
+.restoreButtons {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.restoreBtnSecondary {
+  flex: 1;
+  padding: 14px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font: var(--text-body) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+  cursor: pointer;
+}
+
+.restoreBtnPrimary {
+  flex: 1;
+  padding: 14px;
+  background: var(--foreground);
+  border: none;
+  border-radius: var(--radius-md);
+  font: var(--text-body) 'Pretendard', sans-serif;
+  font-weight: 600;
+  color: var(--background);
+  cursor: pointer;
+}
+
+.submitSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: fadeUp 0.25s ease;
+  padding-bottom: 24px;
+}
+
+.submitBtn {
+  width: 100%;
+  padding: 16px;
+  background: var(--foreground);
+  color: var(--background);
+  border: none;
+  border-radius: var(--radius-md);
+  font: var(--text-body) 'Pretendard', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.submitBtn:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.submitBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.submitError {
+  font: var(--text-caption) 'Pretendard', sans-serif;
+  color: #E53E3E;
+  text-align: center;
+}
