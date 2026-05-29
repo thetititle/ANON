@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { generateMemorialMessage } from '@/lib/generateMessage'
 import styles from './memorial.module.css'
 import MediaSlider from './MediaSlider'
+import MemorialHeader from './MemorialHeader'
 
 type Props = { params: Promise<{ id: string }> }
 
@@ -17,6 +18,9 @@ export default async function MemorialPage({ params }: Props) {
     .single()
 
   if (error || !memorial) notFound()
+
+  const { data: { user } } = await supabase.auth.getUser()
+  const isOwner = user?.id === memorial.user_id
 
   const { data: media } = await supabase
     .from('memorial_media')
@@ -43,10 +47,17 @@ export default async function MemorialPage({ params }: Props) {
   })() : ''
   const salutation = nickname ? `${nickname}${suffix},` : ''
 
+  const rel = memorial.relationship ?? ''
+  const relCode = rel.charCodeAt(rel.length - 1)
+  const relSuffix = (relCode - 0xAC00) % 28 !== 0 ? '이' : '가'
+  const relationshipLabel = `${rel}${relSuffix} 기억하는`
+
   return (
+    <>
+    <MemorialHeader isOwner={isOwner} />
     <main className={styles.page}>
       <section className={styles.hero}>
-        <p className={styles.relationship}>{memorial.relationship}</p>
+        <p className={styles.relationship}>{relationshipLabel}</p>
         <h1 className={styles.name}>{memorial.deceased_name}</h1>
         <p className={styles.dates}>
           {birthFormatted ? `${birthFormatted} — ${deathFormatted}` : deathFormatted}
@@ -68,5 +79,6 @@ export default async function MemorialPage({ params }: Props) {
         </section>
       )}
     </main>
+    </>
   )
 }
