@@ -61,27 +61,26 @@
 .list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
 }
 
 .memorialCard {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-  background: var(--surface);
-  border-radius: var(--radius-md);
+  flex-direction: column;
+  gap: 4px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
   transition: opacity 0.15s ease;
 }
 
 .memorialCard:hover {
-  opacity: 0.8;
+  opacity: 0.6;
 }
 
 .cardName {
-  font: var(--text-body) 'Pretendard', sans-serif;
+  font-size: 1.125rem;
   font-weight: 500;
   color: var(--foreground);
+  letter-spacing: -0.01em;
 }
 
 .cardMeta {
@@ -110,4 +109,15 @@
 
 .createBtn:hover {
   opacity: 0.85;
+}
+
+.newMemorialLink {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+  margin-top: 24px;
+  align-self: flex-start;
+}
+
+.newMemorialLink:hover {
+  color: var(--foreground);
 }
