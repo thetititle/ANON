@@ -264,6 +264,79 @@
   cursor: not-allowed;
 }
 
+.qrSection {
+  display: flex;
+  gap: 24px;
+  padding: 28px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 32px;
+  align-items: flex-start;
+}
+
+.qrBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.accountBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  justify-content: center;
+}
+
+.qrLabel {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+  letter-spacing: 0.05em;
+}
+
+.qrBox {
+  padding: 12px;
+  background: #fff;
+  border-radius: var(--radius-sm);
+}
+
+.qrBank {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+  margin-top: 8px;
+}
+
+.qrAccount {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--foreground);
+  letter-spacing: 0.03em;
+}
+
+.qrHolder {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+}
+
+.copyBtn {
+  margin-top: 10px;
+  padding: 10px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground);
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+  align-self: flex-start;
+}
+
+.copyBtn:hover {
+  opacity: 0.7;
+}
+
 .authPrompt {
   display: flex;
   flex-direction: column;
@@ -306,4 +379,48 @@
   background: var(--surface);
   color: var(--foreground);
   border: 1px solid var(--border);
+}
+
+/* ── 49일 빛 테마 ── */
+
+.lightWrapper {
+  min-height: 100dvh;
+  background: linear-gradient(180deg, #FFF8E0 0%, #FAF8F5 40%);
+}
+
+@media (prefers-color-scheme: dark) {
+  .lightWrapper {
+    background: linear-gradient(180deg, #2E2510 0%, #1A1715 40%);
+  }
+}
+
+.dDayBadge {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 4px 14px;
+  border-radius: 100px;
+  background: var(--surface);
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+  letter-spacing: 0.04em;
+}
+
+.day49Label {
+  margin-top: 4px;
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--light-primary);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.messageCardLight {
+  background: linear-gradient(135deg, #FFF3C4 0%, #FDE8A0 100%);
+  border: 1px solid #F5D98A;
+}
+
+@media (prefers-color-scheme: dark) {
+  .messageCardLight {
+    background: linear-gradient(135deg, #2A2008 0%, #352A0A 100%);
+    border-color: #5A4A1A;
+  }
 }

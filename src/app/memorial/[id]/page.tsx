@@ -1,10 +1,13 @@
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import { generateMemorialMessage } from '@/lib/generateMessage'
+import { getDay49Status } from '@/lib/day49'
+import TimeBackground from '@/components/TimeBackground'
 import styles from './memorial.module.css'
 import MediaSlider from './MediaSlider'
 import MemorialHeader from './MemorialHeader'
 import CondolenceSection from './CondolenceSection'
+import CondolenceQR from './CondolenceQR'
 
 type Props = { params: Promise<{ id: string }> }
 
@@ -58,9 +61,17 @@ export default async function MemorialPage({ params }: Props) {
   const birthFormatted = memorial.birth_at ? formatDate(memorial.birth_at) : null
   const deathFormatted = formatDate(memorial.passed_at)
 
-  const message = memorial.personality_tags?.length > 0
-    ? generateMemorialMessage(memorial.deceased_name, memorial.personality_tags, id)
-    : ''
+  const day49 = getDay49Status(memorial.passed_at)
+  const isLightTheme = day49.state === 'light'
+
+  // DB 저장 메시지 우선, 없으면 static fallback
+  const message = isLightTheme
+    ? (memorial.message_49 ?? (memorial.personality_tags?.length > 0
+        ? generateMemorialMessage(memorial.deceased_name, memorial.personality_tags, id, true)
+        : ''))
+    : (memorial.message ?? (memorial.personality_tags?.length > 0
+        ? generateMemorialMessage(memorial.deceased_name, memorial.personality_tags, id, false)
+        : ''))
 
   const nickname = memorial.nickname_for_user ?? ''
   const suffix = nickname ? (() => {
@@ -75,8 +86,8 @@ export default async function MemorialPage({ params }: Props) {
   const relSuffix = (relCode - 0xAC00) % 28 !== 0 ? '이' : '가'
   const relationshipLabel = `${rel}${relSuffix} 기억하는`
 
-  return (
-    <>
+  const content = (
+    <div className={isLightTheme ? styles.lightWrapper : undefined}>
     <MemorialHeader isOwner={isOwner} />
     <main className={styles.page}>
       <section className={styles.hero}>
@@ -85,11 +96,17 @@ export default async function MemorialPage({ params }: Props) {
         <p className={styles.dates}>
           {birthFormatted ? `${birthFormatted} — ${deathFormatted}` : deathFormatted}
         </p>
+        {day49.state === 'before' && (
+          <span className={styles.dDayBadge}>49일까지 D-{day49.daysLeft}</span>
+        )}
+        {isLightTheme && (
+          <p className={styles.day49Label}>오늘은 49일이에요</p>
+        )}
       </section>
 
       {message && (
         <section className={styles.section}>
-          <div className={styles.messageCard}>
+          <div className={`${styles.messageCard} ${isLightTheme ? styles.messageCardLight : ''}`}>
             {salutation && <p className={styles.salutation}>{salutation}</p>}
             <p className={styles.messageText}>{message}</p>
           </div>
@@ -102,6 +119,15 @@ export default async function MemorialPage({ params }: Props) {
         </section>
       )}
 
+      {memorial.accepts_condolence && memorial.bank_name && memorial.account_number && memorial.account_holder && (
+        <CondolenceQR
+          bankName={memorial.bank_name}
+          accountNumber={memorial.account_number}
+          accountHolder={memorial.account_holder}
+          isOwner={isOwner}
+        />
+      )}
+
       <CondolenceSection
         memorialId={id}
         initialComments={comments ?? []}
@@ -109,6 +135,9 @@ export default async function MemorialPage({ params }: Props) {
         currentUserName={currentUserName}
       />
     </main>
-    </>
+    </div>
   )
+
+  if (isLightTheme) return content
+  return <TimeBackground>{content}</TimeBackground>
 }
