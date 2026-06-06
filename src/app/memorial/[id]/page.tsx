@@ -4,6 +4,7 @@ import { generateMemorialMessage } from '@/lib/generateMessage'
 import styles from './memorial.module.css'
 import MediaSlider from './MediaSlider'
 import MemorialHeader from './MemorialHeader'
+import CondolenceSection from './CondolenceSection'
 
 type Props = { params: Promise<{ id: string }> }
 
@@ -27,6 +28,28 @@ export default async function MemorialPage({ params }: Props) {
     .select('*')
     .eq('memorial_id', id)
     .order('order')
+
+  const { data: commentsRaw } = await supabase
+    .from('memorial_comments')
+    .select('id, guest_name, content, created_at, user_id, users(real_name)')
+    .eq('memorial_id', id)
+    .order('created_at', { ascending: false })
+
+  const comments = (commentsRaw ?? []).map((c) => {
+    const usersData = c.users as { real_name: string } | { real_name: string }[] | null
+    const realName = Array.isArray(usersData) ? usersData[0]?.real_name : usersData?.real_name
+    return {
+      id: c.id as string,
+      content: c.content as string,
+      created_at: c.created_at as string,
+      user_id: c.user_id as string | null,
+      author_name: (c.guest_name as string | null) ?? realName ?? null,
+    }
+  })
+
+  const currentUserName = user
+    ? (await supabase.from('users').select('real_name').eq('id', user.id).single()).data?.real_name ?? null
+    : null
 
   function formatDate(dateStr: string) {
     return dateStr.replace(/-/g, '.')
@@ -78,6 +101,13 @@ export default async function MemorialPage({ params }: Props) {
           <MediaSlider media={media} />
         </section>
       )}
+
+      <CondolenceSection
+        memorialId={id}
+        initialComments={comments ?? []}
+        currentUserId={user?.id ?? null}
+        currentUserName={currentUserName}
+      />
     </main>
     </>
   )

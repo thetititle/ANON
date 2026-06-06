@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server'
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
-  const next = searchParams.get('next') ?? '/'
+  const next = searchParams.get('next')
 
   if (!code) {
     return NextResponse.redirect(`${origin}/login?error=no_code`)
@@ -50,5 +50,21 @@ export async function GET(request: Request) {
     }
   }
 
-  return NextResponse.redirect(`${origin}${next}`)
+  if (next) {
+    return NextResponse.redirect(`${origin}${next}`)
+  }
+
+  if (user) {
+    const { data: memorials } = await supabase
+      .from('memorials')
+      .select('id')
+      .eq('user_id', user.id)
+      .limit(1)
+
+    if (memorials && memorials.length > 0) {
+      return NextResponse.redirect(`${origin}/`)
+    }
+  }
+
+  return NextResponse.redirect(`${origin}/create`)
 }
