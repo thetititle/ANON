@@ -21,9 +21,9 @@ export async function proxy(request: NextRequest) {
     }
   )
 
-  const { data: { session } } = await supabase.auth.getSession()
+  const { data: { user } } = await supabase.auth.getUser()
 
-  if (!session && request.nextUrl.pathname.startsWith('/create')) {
+  if (!user && request.nextUrl.pathname.startsWith('/create')) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     url.searchParams.set('next', request.nextUrl.pathname)

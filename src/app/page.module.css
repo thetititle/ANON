@@ -39,6 +39,41 @@
   color: var(--foreground-muted);
 }
 
+/* ── 랜딩 애니메이션 ── */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+.landingPage {
+  /* 2.6s 후 0.5s 동안 fade-out, 3.1s에 리다이렉트 */
+  animation: fadeOut 0.5s ease 2.6s forwards;
+}
+
+.landingCenter {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 12px;
+}
+
+.landingLogo {
+  animation: fadeIn 1.6s ease both;
+}
+
+.landingDesc {
+  animation: fadeIn 1.2s ease 0.9s both;
+}
+
 .content {
   flex: 1;
   display: flex;
@@ -63,17 +98,112 @@
   flex-direction: column;
 }
 
+/* 카드 + 액션 메뉴 */
+.cardWrapper {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
 .memorialCard {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 4px;
   padding: 20px 0;
-  border-bottom: 1px solid var(--border);
   transition: opacity 0.15s ease;
 }
 
 .memorialCard:hover {
   opacity: 0.6;
+}
+
+.menuBtn {
+  padding: 8px 0 8px 16px;
+  color: var(--foreground-muted);
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  flex-shrink: 0;
+}
+
+.menuDropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% - 8px);
+  min-width: 120px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  z-index: 100;
+  overflow: hidden;
+}
+
+.menuItem {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground);
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.menuItem:hover {
+  background: var(--background);
+}
+
+.menuItemDelete {
+  color: #E53E3E;
+}
+
+/* 삭제 확인 */
+.deleteConfirm {
+  padding: 20px 0;
+  width: 100%;
+}
+
+.deleteConfirmText {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground);
+  line-height: 1.7;
+  margin-bottom: 14px;
+}
+
+.deleteConfirmActions {
+  display: flex;
+  gap: 8px;
+}
+
+.deleteCancelBtn {
+  flex: 1;
+  padding: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground);
+  cursor: pointer;
+}
+
+.deleteConfirmBtn {
+  flex: 1;
+  padding: 10px;
+  background: #E53E3E;
+  border: none;
+  border-radius: var(--radius-sm);
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: #fff;
+  cursor: pointer;
+}
+
+.deleteConfirmBtn:disabled,
+.deleteCancelBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .cardName {

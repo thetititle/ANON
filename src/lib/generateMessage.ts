@@ -1,3 +1,34 @@
+const MESSAGES_49: Record<string, string[]> = {
+  '다정한': [
+    '이제 편히 가.\n네 따뜻함은 여기 남아 있을게.\n좋은 곳에서 행복하게 지내.',
+    '여기까지 와줬어.\n이제 가도 돼.\n늘 감사했어, 사랑해.',
+  ],
+  '유쾌한': [
+    '야, 잘 가!\n저 세상에서도 웃게 해줘.\n나도 곧 따라갈 테니까 기다려.',
+    '오늘로 49일이래.\n그러니까 이제 훌쩍 떠나도 돼.\n거기서도 재밌게 살아.',
+  ],
+  '차분한': [
+    '49일이 됐어.\n이제 천천히 떠나도 돼.\n잘 가.',
+    '조용히 잘 가.\n여기선 잘 지낼게.',
+  ],
+  '자상한': [
+    '많이 걱정하지 않아도 돼.\n여기 있는 사람들 다 잘 지낼 거야.\n편히 가.',
+    '이제 네 짐 다 내려놓아도 돼.\n고마웠어, 잘 가.',
+  ],
+  '강직한': [
+    '마지막까지 잘 버텼어.\n이제 가도 돼.\n잘 가.',
+    '49일이야.\n편히 쉬어.',
+  ],
+  '성실한': [
+    '평생 열심히 살았잖아.\n이제 쉬어도 돼.\n잘 가.',
+    '고생했어.\n이제 편히 가.',
+  ],
+  '무뚝뚝한': [
+    '...가.',
+    '이제 됐어.\n잘 가.',
+  ],
+}
+
 const MESSAGES: Record<string, string[]> = {
   '다정한': [
     '보고 싶어.\n항상 곁에서 응원하고 있을게.\n잘 먹고, 잘 자고, 행복하게 지내.',
@@ -32,15 +63,19 @@ const MESSAGES: Record<string, string[]> = {
 export function generateMemorialMessage(
   _deceasedName: string,
   personalityTags: string[],
-  memorialId: string
+  memorialId: string,
+  is49th = false
 ): string {
+  const pool = is49th ? MESSAGES_49 : MESSAGES
+  const fallback = is49th
+    ? '이제 편히 가. 기억할게.'
+    : '이곳에 와줘서 고마워. 항상 기억하고 있을게.'
   for (const tag of personalityTags) {
-    const messages = MESSAGES[tag]
+    const messages = pool[tag]
     if (messages) {
-      // memorial ID 기반으로 메시지 고정 선택 (새로고침해도 안 바뀜)
       const index = memorialId.charCodeAt(0) % messages.length
       return messages[index]
     }
   }
-  return '이곳에 와줘서 고마워. 항상 기억하고 있을게.'
+  return fallback
 }

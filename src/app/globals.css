@@ -189,6 +189,69 @@ body {
 
 
 /* ============================================================
+   시간대별 배경 전환 (추모 페이지 전용)
+   ============================================================ */
+
+[data-time] {
+  transition: background-color 2s ease;
+}
+
+/* 일출 05–08시 — 분홍빛 새벽 */
+[data-time="dawn"] {
+  --background: #FFF8F5;
+  --surface:    #F5EDEA;
+  --border:     #E8DAD5;
+}
+@media (prefers-color-scheme: dark) {
+  [data-time="dawn"] {
+    --background: #1F1916;
+    --surface:    #2A201C;
+    --border:     #3D2E28;
+  }
+}
+
+/* 낮 09–16시 — 기본값 유지, 오버라이드 없음 */
+
+/* 일몰 17–19시 — 앰버 노을 */
+[data-time="dusk"] {
+  --background: #FFF6EE;
+  --surface:    #F5E8DC;
+  --border:     #E5D5C5;
+}
+@media (prefers-color-scheme: dark) {
+  [data-time="dusk"] {
+    --background: #1F1710;
+    --surface:    #2A1E12;
+    --border:     #3D2E1C;
+  }
+}
+
+/* 월출 20–22시 — 청회색 달빛 */
+[data-time="moonrise"] {
+  --background: #F5F6FF;
+  --surface:    #EAEBF5;
+  --border:     #D5D6E8;
+}
+@media (prefers-color-scheme: dark) {
+  [data-time="moonrise"] {
+    --background: #141320;
+    --surface:    #1C1B2C;
+    --border:     #2A2840;
+  }
+}
+
+/* 심야 23–04시 — 강제 다크 */
+[data-time="night"] {
+  --background:        #131318;
+  --surface:           #1C1C26;
+  --border:            #2A2A3A;
+  --foreground:        #E8E8F2;
+  --foreground-muted:  #7878A0;
+  --primary:           #9090C0;
+  --primary-hover:     #A8A8D0;
+}
+
+/* ============================================================
    레이아웃
    ============================================================ */
 
