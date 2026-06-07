@@ -7,7 +7,6 @@ import styles from './memorial.module.css'
 import MediaSlider from './MediaSlider'
 import MemorialHeader from './MemorialHeader'
 import CondolenceSection from './CondolenceSection'
-import CondolenceQR from './CondolenceQR'
 
 type Props = { params: Promise<{ id: string }> }
 
@@ -119,19 +118,15 @@ export default async function MemorialPage({ params }: Props) {
         </section>
       )}
 
-      {memorial.accepts_condolence && memorial.bank_name && memorial.account_number && memorial.account_holder && (
-        <CondolenceQR
-          bankName={memorial.bank_name}
-          accountNumber={memorial.account_number}
-          accountHolder={memorial.account_holder}
-        />
-      )}
-
       <CondolenceSection
         memorialId={id}
         initialComments={comments ?? []}
         currentUserId={user?.id ?? null}
         currentUserName={currentUserName}
+        acceptsCondolence={memorial.accepts_condolence ?? false}
+        bankName={memorial.bank_name ?? null}
+        accountNumber={memorial.account_number ?? null}
+        accountHolder={memorial.account_holder ?? null}
       />
     </main>
     </div>
