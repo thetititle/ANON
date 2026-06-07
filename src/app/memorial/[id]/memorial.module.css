@@ -152,6 +152,59 @@
   margin: 40px 0;
 }
 
+/* 조의를 전합니다 */
+.condolenceTitle {
+  font: var(--text-body) 'Pretendard', sans-serif;
+  font-weight: 600;
+  color: var(--foreground);
+  margin-bottom: 24px;
+}
+
+.paymentSection {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.paymentBtn {
+  width: 100%;
+  padding: 14px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font: var(--text-body) 'Pretendard', sans-serif;
+  font-weight: 500;
+  color: var(--foreground);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.paymentBtn:hover {
+  background: var(--surface);
+}
+
+.paymentMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+}
+
+.bankBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+}
+
 /* 조문 메시지 */
 .condolenceSection {
   padding-bottom: 80px;
