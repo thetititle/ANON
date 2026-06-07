@@ -124,7 +124,6 @@ export default async function MemorialPage({ params }: Props) {
           bankName={memorial.bank_name}
           accountNumber={memorial.account_number}
           accountHolder={memorial.account_holder}
-          isOwner={isOwner}
         />
       )}
 

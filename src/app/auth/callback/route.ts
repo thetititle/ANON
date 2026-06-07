@@ -32,6 +32,8 @@ export async function GET(request: Request) {
   }
 
   const { data: { user } } = await supabase.auth.getUser()
+  let isNewUser = false
+
   if (user) {
     const { data: existing } = await supabase
       .from('users')
@@ -40,31 +42,21 @@ export async function GET(request: Request) {
       .single()
 
     if (!existing) {
+      isNewUser = true
       const realName =
         user.user_metadata?.full_name ??
         user.user_metadata?.name ??
         user.user_metadata?.preferred_username ??
         '이름 없음'
-
       await supabase.from('users').insert({ id: user.id, real_name: realName })
     }
   }
 
-  if (next) {
+  // 특정 페이지 복귀 (예: /memorial/xxx 세션 만료 후 재진입)
+  if (next && next !== '/' && next !== '/create') {
     return NextResponse.redirect(`${origin}${next}`)
   }
 
-  if (user) {
-    const { data: memorials } = await supabase
-      .from('memorials')
-      .select('id')
-      .eq('user_id', user.id)
-      .limit(1)
-
-    if (memorials && memorials.length > 0) {
-      return NextResponse.redirect(`${origin}/`)
-    }
-  }
-
-  return NextResponse.redirect(`${origin}/create`)
+  // 신규 가입자는 바로 생성 폼으로, 기존 사용자는 홈으로
+  return NextResponse.redirect(`${origin}${isNewUser ? '/create' : '/'}`)
 }
