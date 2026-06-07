@@ -193,62 +193,101 @@ body {
    ============================================================ */
 
 [data-time] {
-  transition: background-color 2s ease;
+  transition: background-color 2s ease, color 2s ease;
 }
 
-/* 일출 05–08시 — 분홍빛 새벽 */
+/* 심야 00–04시 — 강제 다크, 짙은 어둠 */
+[data-time="late-night"] {
+  --background:       #0D0D1A;
+  --surface:          #13131F;
+  --border:           #1E1E2E;
+  --foreground:       #DCDCF0;
+  --foreground-muted: #6868A0;
+}
+
+/* 새벽 04–06시 — 강제 다크, 인디고 어둠 */
+[data-time="predawn"] {
+  --background:       #111428;
+  --surface:          #181C38;
+  --border:           #252840;
+  --foreground:       #D0D4F0;
+  --foreground-muted: #6070A0;
+}
+
+/* 여명 06–08시 — 블러시 핑크, 일출 전 */
 [data-time="dawn"] {
-  --background: #FFF8F5;
-  --surface:    #F5EDEA;
-  --border:     #E8DAD5;
-}
-@media (prefers-color-scheme: dark) {
-  [data-time="dawn"] {
-    --background: #1F1916;
-    --surface:    #2A201C;
-    --border:     #3D2E28;
-  }
+  --background: #FFF0F5;
+  --surface:    #F8E5EF;
+  --border:     #EDD5E2;
 }
 
-/* 낮 09–16시 — 기본값 유지, 오버라이드 없음 */
+/* 아침 08–11시 — 따뜻한 크림 */
+[data-time="morning"] {
+  --background: #FFFCF0;
+  --surface:    #F5EDDA;
+  --border:     #E5D8C0;
+}
 
-/* 일몰 17–19시 — 앰버 노을 */
+/* 낮 11–14시 — 기본값 유지 */
+
+/* 오후 14–17시 — 연한 쿨톤 */
+[data-time="afternoon"] {
+  --background: #F5F8F5;
+  --surface:    #EAF0EA;
+  --border:     #D5E0D5;
+}
+
+/* 저녁 17–19시 — 황금빛 앰버 */
+[data-time="evening"] {
+  --background: #FFF8E8;
+  --surface:    #F5E8C8;
+  --border:     #E8D5A8;
+}
+
+/* 황혼 19–21시 — 장밋빛 노을 */
 [data-time="dusk"] {
-  --background: #FFF6EE;
-  --surface:    #F5E8DC;
-  --border:     #E5D5C5;
-}
-@media (prefers-color-scheme: dark) {
-  [data-time="dusk"] {
-    --background: #1F1710;
-    --surface:    #2A1E12;
-    --border:     #3D2E1C;
-  }
+  --background: #FFF0E8;
+  --surface:    #F5DDD0;
+  --border:     #E8C8B8;
 }
 
-/* 월출 20–22시 — 청회색 달빛 */
-[data-time="moonrise"] {
-  --background: #F5F6FF;
-  --surface:    #EAEBF5;
-  --border:     #D5D6E8;
-}
-@media (prefers-color-scheme: dark) {
-  [data-time="moonrise"] {
-    --background: #141320;
-    --surface:    #1C1B2C;
-    --border:     #2A2840;
-  }
-}
-
-/* 심야 23–04시 — 강제 다크 */
+/* 밤 21–24시 — 차가운 인디고 */
 [data-time="night"] {
-  --background:        #131318;
-  --surface:           #1C1C26;
-  --border:            #2A2A3A;
-  --foreground:        #E8E8F2;
-  --foreground-muted:  #7878A0;
-  --primary:           #9090C0;
-  --primary-hover:     #A8A8D0;
+  --background: #F0F0FF;
+  --surface:    #E5E5F8;
+  --border:     #CECEE8;
+}
+
+/* 다크모드에서도 추모 페이지는 라이트 모드 유지
+   (심야·새벽은 시간적 어둠이므로 예외) */
+@media (prefers-color-scheme: dark) {
+  [data-time] {
+    --background:       #FAF8F5;
+    --surface:          #F2EDE6;
+    --border:           #DDD6CB;
+    --foreground:       #2C2825;
+    --foreground-muted: #8C8076;
+  }
+  [data-time="late-night"] {
+    --background:       #0D0D1A;
+    --surface:          #13131F;
+    --border:           #1E1E2E;
+    --foreground:       #DCDCF0;
+    --foreground-muted: #6868A0;
+  }
+  [data-time="predawn"] {
+    --background:       #111428;
+    --surface:          #181C38;
+    --border:           #252840;
+    --foreground:       #D0D4F0;
+    --foreground-muted: #6070A0;
+  }
+  [data-time="dawn"]      { --background: #FFF0F5; --surface: #F8E5EF; --border: #EDD5E2; }
+  [data-time="morning"]   { --background: #FFFCF0; --surface: #F5EDDA; --border: #E5D8C0; }
+  [data-time="afternoon"] { --background: #F5F8F5; --surface: #EAF0EA; --border: #D5E0D5; }
+  [data-time="evening"]   { --background: #FFF8E8; --surface: #F5E8C8; --border: #E8D5A8; }
+  [data-time="dusk"]      { --background: #FFF0E8; --surface: #F5DDD0; --border: #E8C8B8; }
+  [data-time="night"]     { --background: #F0F0FF; --surface: #E5E5F8; --border: #CECEE8; }
 }
 
 /* ============================================================
