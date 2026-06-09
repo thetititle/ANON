@@ -11,7 +11,7 @@
 .homeLink {
   font: var(--text-sm) 'Pretendard', sans-serif;
   color: var(--foreground-muted);
-  transition: color 0.15s ease;
+  transition: color 0.3s ease;
 }
 
 .homeLink:hover {
@@ -168,22 +168,109 @@
   gap: 10px;
 }
 
+.paymentToggleArea {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.paymentToggleBtn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 2px;
+  background: none;
+  border: none;
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.paymentToggleBtn:hover {
+  color: var(--foreground);
+  transform: translateY(-2px);
+}
+
+.chevronDown {
+  display: inline-block;
+  font-style: normal;
+  transform: rotate(90deg);
+  transition: transform 0.3s ease;
+}
+
+.chevronUp {
+  display: inline-block;
+  font-style: normal;
+  transform: rotate(270deg);
+  transition: transform 0.3s ease;
+}
+
+.paymentExpanded {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.3s ease,
+              transform 0.3s ease;
+}
+
+.paymentExpandedOpen {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.paymentExpandedInner {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 10px;
+}
+
 .paymentBtn {
   width: 100%;
   padding: 14px;
-  background: none;
-  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.10);
   border-radius: var(--radius-md);
   font: var(--text-body) 'Pretendard', sans-serif;
   font-weight: 500;
   color: var(--foreground);
   cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: background 0.3s ease;
 }
 
 .paymentBtn:hover {
-  background: var(--surface);
+  background: rgba(255, 255, 255, 0.08);
 }
+
+/* 낮 슬롯에서 글래스 색상 보정 */
+[data-time="morning"] .paymentBtn,
+[data-time="day"] .paymentBtn,
+[data-time="afternoon"] .paymentBtn {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.50);
+}
+
+[data-time="morning"] .paymentBtn:hover,
+[data-time="day"] .paymentBtn:hover,
+[data-time="afternoon"] .paymentBtn:hover {
+  background: rgba(255, 255, 255, 0.38);
+}
+
+.paymentBtnRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
 
 .paymentMeta {
   display: flex;
@@ -306,7 +393,7 @@
   font: var(--text-body) 'Pretendard', sans-serif;
   font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.15s ease;
+  transition: opacity 0.3s ease;
 }
 
 .commentSubmit:disabled {
@@ -379,7 +466,7 @@
   font: var(--text-sm) 'Pretendard', sans-serif;
   color: var(--foreground);
   cursor: pointer;
-  transition: opacity 0.15s ease;
+  transition: opacity 0.3s ease;
   align-self: flex-start;
 }
 
@@ -415,7 +502,7 @@
   font: var(--text-body) 'Pretendard', sans-serif;
   font-weight: 500;
   cursor: pointer;
-  transition: opacity 0.15s ease;
+  transition: opacity 0.3s ease;
 }
 
 .authBtn:hover { opacity: 0.85; }
@@ -492,7 +579,7 @@
   font: var(--text-sm) 'Pretendard', sans-serif;
   font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.15s ease;
+  transition: opacity 0.3s ease;
 }
 
 .modalCopyBtn:hover {
