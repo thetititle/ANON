@@ -70,6 +70,8 @@ export default function CondolenceSection({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
+  const [kakaoCopied, setKakaoCopied] = useState(false)
+  const [wantsPayment, setWantsPayment] = useState(false)
 
   const showPayment = acceptsCondolence && bankName && accountNumber && accountHolder
 
@@ -119,6 +121,17 @@ export default function CondolenceSection({
     setTimeout(() => setCopied(false), 2000)
   }
 
+  function openToss() {
+    window.location.href = `supertoss://send?bank=${encodeURIComponent(bankName ?? '')}&accountNo=${encodeURIComponent(accountNumber ?? '')}`
+  }
+
+  async function openKakaoPay() {
+    if (accountNumber) await navigator.clipboard.writeText(accountNumber)
+    setKakaoCopied(true)
+    setTimeout(() => setKakaoCopied(false), 3000)
+    setTimeout(() => { window.location.href = 'kakaopay://' }, 100)
+  }
+
   function formatDate(dateStr: string) {
     return new Date(dateStr).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })
   }
@@ -152,6 +165,47 @@ export default function CondolenceSection({
             rows={4}
             maxLength={500}
           />
+
+          {showPayment && (
+            <div className={styles.paymentToggleArea}>
+              <button
+                type="button"
+                className={styles.paymentToggleBtn}
+                onClick={() => setWantsPayment(v => !v)}
+              >
+                <span>조의금도 함께 전하기</span>
+                <span className={wantsPayment ? styles.chevronUp : styles.chevronDown}>›</span>
+              </button>
+
+              <div className={`${styles.paymentExpanded} ${wantsPayment ? styles.paymentExpandedOpen : ''}`}>
+                <div className={styles.paymentExpandedInner}>
+                  <div className={styles.paymentBtnRow}>
+                    <button type="button" className={styles.paymentBtn} onClick={openToss}>
+                      토스로 보내기
+                    </button>
+                    <button type="button" className={styles.paymentBtn} onClick={openKakaoPay}>
+                      {kakaoCopied ? '복사됨 · 앱 열기' : '카카오페이'}
+                    </button>
+                  </div>
+                  <button type="button" className={styles.paymentBtn} onClick={copyAccount}>
+                    {copied ? '계좌번호 복사됨' : '계좌번호 복사'}
+                  </button>
+                  <p className={styles.paymentMeta}>
+                    {(() => {
+                      const badge = getBankBadge(bankName!)
+                      return badge ? (
+                        <span className={styles.bankBadge} style={{ background: badge.bg, color: badge.color }}>
+                          {badge.label}
+                        </span>
+                      ) : null
+                    })()}
+                    {bankName} · {accountNumber} · {accountHolder}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           {error && <p className={styles.commentError}>{error}</p>}
           <button
             type="submit"
@@ -174,25 +228,31 @@ export default function CondolenceSection({
               구글로 인증하기
             </button>
           </div>
-        </div>
-      )}
 
-      {showPayment && (
-        <div className={styles.paymentSection}>
-          <button className={styles.paymentBtn} onClick={copyAccount}>
-            {copied ? '계좌번호 복사됨' : '조의금 함께 전하기'}
-          </button>
-          <p className={styles.paymentMeta}>
-            {(() => {
-              const badge = getBankBadge(bankName!)
-              return badge ? (
-                <span className={styles.bankBadge} style={{ background: badge.bg, color: badge.color }}>
-                  {badge.label}
-                </span>
-              ) : null
-            })()}
-            {bankName} · {accountNumber} · {accountHolder}
-          </p>
+          {showPayment && (
+            <div className={styles.paymentSection}>
+              <div className={styles.paymentBtnRow}>
+                <button className={styles.paymentBtn} onClick={openToss}>토스로 보내기</button>
+                <button className={styles.paymentBtn} onClick={openKakaoPay}>
+                  {kakaoCopied ? '복사됨 · 앱 열기' : '카카오페이'}
+                </button>
+              </div>
+              <button className={styles.paymentBtn} onClick={copyAccount}>
+                {copied ? '계좌번호 복사됨' : '계좌번호 복사'}
+              </button>
+              <p className={styles.paymentMeta}>
+                {(() => {
+                  const badge = getBankBadge(bankName!)
+                  return badge ? (
+                    <span className={styles.bankBadge} style={{ background: badge.bg, color: badge.color }}>
+                      {badge.label}
+                    </span>
+                  ) : null
+                })()}
+                {bankName} · {accountNumber} · {accountHolder}
+              </p>
+            </div>
+          )}
         </div>
       )}
     </section>
