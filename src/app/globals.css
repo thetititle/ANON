@@ -189,105 +189,118 @@ body {
 
 
 /* ============================================================
-   시간대별 배경 전환 (추모 페이지 전용)
+   별 반짝임
    ============================================================ */
 
-[data-time] {
-  transition: background-color 2s ease, color 2s ease;
+/* 별 반짝임 — 5그룹 × 다른 타이밍 */
+@keyframes star-twinkle {
+  0%, 100% { opacity: 0.12; }
+  50%       { opacity: 1;    }
 }
 
-/* 심야 00–04시 — 강제 다크, 짙은 어둠 */
+.star-group-0 { animation: star-twinkle 4.0s ease-in-out infinite; }
+.star-group-1 { animation: star-twinkle 5.5s ease-in-out infinite; animation-delay: -1.2s; }
+.star-group-2 { animation: star-twinkle 3.8s ease-in-out infinite; animation-delay: -2.5s; }
+.star-group-3 { animation: star-twinkle 6.2s ease-in-out infinite; animation-delay: -0.8s; }
+.star-group-4 { animation: star-twinkle 4.5s ease-in-out infinite; animation-delay: -3.7s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .star-group-0, .star-group-1, .star-group-2, .star-group-3, .star-group-4 {
+    animation: none;
+  }
+}
+
+/* ============================================================
+   시간대별 배경 전환 (추모 페이지 전용)
+   그라디언트는 TimeBackground.tsx 오버레이 div가 담당,
+   여기선 컴포넌트용 CSS 변수만 제어
+   ============================================================ */
+
+/* 심야 00–04시 */
 [data-time="late-night"] {
-  --background:       #0D0D1A;
-  --surface:          #13131F;
-  --border:           #1E1E2E;
-  --foreground:       #DCDCF0;
-  --foreground-muted: #6868A0;
+  --background:       #07070E;
+  --surface:          rgba(255, 255, 255, 0.07);
+  --border:           rgba(255, 255, 255, 0.12);
+  --foreground:       #E8E4F8;
+  --foreground-muted: #7870A8;
 }
 
-/* 새벽 04–06시 — 강제 다크, 인디고 어둠 */
+/* 새벽 04–06시 */
 [data-time="predawn"] {
-  --background:       #111428;
-  --surface:          #181C38;
-  --border:           #252840;
-  --foreground:       #D0D4F0;
-  --foreground-muted: #6070A0;
+  --background:       #080C18;
+  --surface:          rgba(255, 255, 255, 0.07);
+  --border:           rgba(255, 255, 255, 0.12);
+  --foreground:       #D8DCF8;
+  --foreground-muted: #6878A8;
 }
 
-/* 여명 06–08시 — 블러시 핑크, 일출 전 */
+/* 여명 06–08시 */
 [data-time="dawn"] {
-  --background: #FFF0F5;
-  --surface:    #F8E5EF;
-  --border:     #EDD5E2;
+  --background:       #110810;
+  --surface:          rgba(255, 255, 255, 0.07);
+  --border:           rgba(255, 255, 255, 0.12);
+  --foreground:       #F0E4EC;
+  --foreground-muted: #A07888;
 }
 
-/* 아침 08–11시 — 따뜻한 크림 */
+/* 아침 08–11시 */
 [data-time="morning"] {
-  --background: #FFFCF0;
-  --surface:    #F5EDDA;
-  --border:     #E5D8C0;
+  --background: #FAF5E8;
+  --surface:    #F0E8D0;
+  --border:     #DDD0B0;
 }
 
-/* 낮 11–14시 — 기본값 유지 */
+/* 낮 11–14시 */
+[data-time="day"] {
+  --background:       #FAF8F5;
+  --surface:          #F2EDE6;
+  --border:           #DDD6CB;
+  --foreground:       #2C2825;
+  --foreground-muted: #8C8076;
+}
 
-/* 오후 14–17시 — 연한 쿨톤 */
+/* 오후 14–17시 */
 [data-time="afternoon"] {
-  --background: #F5F8F5;
-  --surface:    #EAF0EA;
-  --border:     #D5E0D5;
+  --background: #F3F7F9;
+  --surface:    #E6EDF2;
+  --border:     #CCD8E0;
 }
 
-/* 저녁 17–19시 — 황금빛 앰버 */
+/* 저녁 17–19시 */
 [data-time="evening"] {
-  --background: #FFF8E8;
-  --surface:    #F5E8C8;
-  --border:     #E8D5A8;
+  --background:       #120C06;
+  --surface:          rgba(255, 255, 255, 0.07);
+  --border:           rgba(255, 255, 255, 0.12);
+  --foreground:       #F4ECD8;
+  --foreground-muted: #A08858;
 }
 
-/* 황혼 19–21시 — 장밋빛 노을 */
+/* 황혼 19–21시 */
 [data-time="dusk"] {
-  --background: #FFF0E8;
-  --surface:    #F5DDD0;
-  --border:     #E8C8B8;
+  --background:       #100810;
+  --surface:          rgba(255, 255, 255, 0.07);
+  --border:           rgba(255, 255, 255, 0.12);
+  --foreground:       #F0E0EC;
+  --foreground-muted: #9870A0;
 }
 
-/* 밤 21–24시 — 차가운 인디고 */
+/* 밤 21–24시 */
 [data-time="night"] {
-  --background: #F0F0FF;
-  --surface:    #E5E5F8;
-  --border:     #CECEE8;
+  --background:       #090918;
+  --surface:          rgba(255, 255, 255, 0.07);
+  --border:           rgba(255, 255, 255, 0.12);
+  --foreground:       #DDE0F8;
+  --foreground-muted: #7080B8;
 }
 
-/* 다크모드에서도 추모 페이지는 라이트 모드 유지
-   (심야·새벽은 시간적 어둠이므로 예외) */
+/* 다크모드에서도 라이트 슬롯은 어두운 텍스트 유지 */
 @media (prefers-color-scheme: dark) {
-  [data-time] {
-    --background:       #FAF8F5;
-    --surface:          #F2EDE6;
-    --border:           #DDD6CB;
+  [data-time="morning"],
+  [data-time="day"],
+  [data-time="afternoon"] {
     --foreground:       #2C2825;
     --foreground-muted: #8C8076;
   }
-  [data-time="late-night"] {
-    --background:       #0D0D1A;
-    --surface:          #13131F;
-    --border:           #1E1E2E;
-    --foreground:       #DCDCF0;
-    --foreground-muted: #6868A0;
-  }
-  [data-time="predawn"] {
-    --background:       #111428;
-    --surface:          #181C38;
-    --border:           #252840;
-    --foreground:       #D0D4F0;
-    --foreground-muted: #6070A0;
-  }
-  [data-time="dawn"]      { --background: #FFF0F5; --surface: #F8E5EF; --border: #EDD5E2; }
-  [data-time="morning"]   { --background: #FFFCF0; --surface: #F5EDDA; --border: #E5D8C0; }
-  [data-time="afternoon"] { --background: #F5F8F5; --surface: #EAF0EA; --border: #D5E0D5; }
-  [data-time="evening"]   { --background: #FFF8E8; --surface: #F5E8C8; --border: #E8D5A8; }
-  [data-time="dusk"]      { --background: #FFF0E8; --surface: #F5DDD0; --border: #E8C8B8; }
-  [data-time="night"]     { --background: #F0F0FF; --surface: #E5E5F8; --border: #CECEE8; }
 }
 
 /* ============================================================
