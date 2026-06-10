@@ -1,114 +1,137 @@
-# 안온(安溫) 프로젝트 현황 정리
+# 안온(安溫) 프로젝트 현황
 
-## 1. 프로젝트 개요
-
-- **프로젝트명**: 안온(安溫) — 온라인 부고장 + 디지털 추모 서비스
-- **컨셉**: 갑작스러운 이별을 맞이한 유족이 기술적 절차를 밟으며 슬픔을 완화하고, 한국의 49제 전통을 현대 기술로 재해석한 추모 공간. 생성된 추모 페이지는 온라인 부고장으로도 기능하여 링크 하나로 부고 공유 → 조문 메시지 → 디지털 앨범 열람을 처리
-- **기술 환경**: Next.js 16.2.4 / React 19.2.4 / Supabase (Storage + PostgreSQL) / CSS Modules / Pretendard Variable
-- **플랫폼**: 모바일 친화적 반응형 웹 (PC / 태블릿 / 모바일 3단계 breakpoint)
+> 마지막 업데이트: 2026-06-09
 
 ---
 
-## 2. 프로젝트 목적 및 철학
+## 기술 스택
 
-- **슬픔의 완화와 수용**: 8단계의 점진적 입력 폼을 통해 정서적 충격을 완충하고 고인을 받아들이도록 돕는 심리적 완충지대 역할
-- **디지털 천도(昇天)**: 49제를 시각적으로 형상화 — 49일째 도래 시점부터 '빛과 평온함' 테마로 자동 전환되는 천도 연출
-- **온라인 부고장**: 추모 페이지 링크를 공유하면 지인이 앱 설치 없이 조문 메시지를 남기고 디지털 앨범을 열람할 수 있는 부고장 역할 겸용
-- **신뢰와 책임의 추모**: 카카오/네이버/구글 소셜 실명 인증을 통해 익명 모독을 차단하고, RLS 보안으로 작성자 외 수정/삭제 원천 차단
-- **법적 대응 가능한 아카이브**: 소프트 삭제 + 별도 아카이브 테이블에 보존하여 모독 발생 시 법적 증거로 활용
-
----
-
-## 3. 기술 스택 실제 상태
-
-| 항목 | 문서 기록 | 실제 | 비고 |
-|---|---|---|---|
-| Next.js | 14 | **16.2.4** | CLAUDE.md 오기 |
-| React | — | 19.2.4 | — |
-| Tailwind CSS | 사용 | 설치만 됨 | CSS Modules로 대체, devDependency 제거 예정 |
-| date-fns | 예정 | 미설치 | 49제 D-Day 계산 시 설치 |
-| Zustand | 예정 | 미설치 | 폼 데이터 수집 구조 결정 후 필요 시 설치 |
-| qrcode.react | 예정 | 미설치 | 조의금 QR 구현 시 설치 |
+| 항목 | 버전 / 상태 |
+|---|---|
+| Next.js | 16.2.4 (App Router) |
+| React | 19.2.4 |
+| TypeScript | — |
+| Supabase | PostgreSQL + Auth + Storage |
+| CSS Modules | Tailwind 미사용 (설치만, 제거 예정) |
+| Pretendard Variable | 웹폰트 로컬 서빙 |
 
 ---
 
-## 4. 진행 상황
+## 구현 완료 기능
 
-### 4.1 완성된 영역
+### 인증
+- 카카오 + 구글 OAuth (네이버 스킵 확정)
+- `auth/callback`: 신규/기존 유저 분기 (신규 → `/create`, 기존 → `/`)
+- `proxy.ts`: `/create` 인증 보호, `getUser()` 보안 수정
 
-- **디자인 시스템** (`globals.css`): CSS 변수, 다크모드, 반응형 rem, 라운드, Pretendard 웹폰트 적용 완료
-- **랜딩 / 생성 페이지 마크업**
-  - `/` 단순 랜딩 (전체 영역이 `/create` 링크)
-  - `/create` 챗 UI 순차 공개 + 스텝 등장 애니메이션(fadeUp 0.25s) + 자동 스크롤 + 진행률 계산
-- **공통 컴포넌트 7종**
+### 홈 (`/`)
+- 비로그인: 랜딩 페이지 (fadeIn 애니메이션, 3.1초 후 `/login` 자동 이동)
+- 로그인 + 추모 목록 있음: 추모 목록 카드 (`⋯` 버튼 → 수정/삭제 드롭다운)
+- 로그인 + 목록 없음: `/create` 이동
 
-  | 컴포넌트 | 특이사항 |
-  |---|---|
-  | `ChatBubble` | left / right 정렬 |
-  | `ProgressBar` | 애니메이션 없음 |
-  | `FormInput` | Enter로 완료, sizer로 자동 너비 |
-  | `DateInput` | 숫자 자동 포커스 이동, CustomAlert 확인 |
-  | `ChipSelect` | Swiper 가로 스크롤, 최대 선택 제한 |
-  | `CustomAlert` | backdrop + primary / secondary 버튼 |
-  | `MediaUpload` | 이미지 20장 + 영상 1개, 썸네일 그리드 |
+### 추모 페이지 생성 (`/create`)
+- FORM_STEPS 선언적 8단계 폼
+- localStorage 자동저장 + 복원
+- Supabase insert (memorials + memorial_media 스토리지 업로드)
 
-- **폼 스텝 8단계 정의**: `name → birth → death → relation → media → personality → nickname → condolence`
+### 추모 페이지 (`/memorial/[id]`)
+- 고인 기본 정보 (이름, 날짜, 관계, D-Day)
+- Swiper.js 미디어 슬라이더 (이미지/영상)
+- 성격 기반 고인 메시지 (static, 49일 버전 별도)
+- 49제 D-Day 카운트 + 빛 테마 자동 전환 (49일째 라이트모드 고정)
+- 헤더: "← 목록" 네비게이션 + 공유 버튼 → QR 모달 (꾹 누르기/더블클릭 PNG 저장)
+- 시간대별 배경 9단계 자동 전환
 
-### 4.2 버그
+### 조의 섹션
+- 조문 메시지: 로그인 필수, 누구나 열람
+- 조의금 섹션: "조의금도 함께 전하기" 토글 → 슬라이드다운 애니메이션
+  - 토스 딥링크 (계좌번호 자동 입력)
+  - 카카오페이 (계좌번호 복사 후 앱 열기)
+  - 계좌번호 복사 fallback
+  - 은행 뱃지 (24개 은행 브랜드 컬러)
 
-- **★ 크리티컬: 폼 데이터 수집 부재** — 각 컴포넌트가 값을 로컬 state에만 보관, `onComplete()`가 신호만 전달하고 값은 부모로 올라가지 않아 제출 시 데이터가 증발
-- **제출 로직 자체 없음** — 마지막 스텝 완료 후 Supabase insert 없음, 제출 버튼 없음
-- **DateInput 유효성 검사 없음** — 13월 / 32일 / 미래일자 입력 가능, 사망일이 생년월일보다 앞설 수 있음
-- **MediaUpload 메모리 누수** — `URL.revokeObjectURL()`이 수동 삭제 시에만 호출, 언마운트 정리 없음
-
-### 4.3 미구현
-
-- **localStorage 자동저장 미구현** — 설계만 있고 코드 없음, 재진입 복원 UI도 없음
-- **닫기(✕) 버튼 누락**
-- **Supabase SSR 클라이언트 미사용** — `@supabase/ssr` 설치돼 있으나 일반 `createClient` 사용 중, App Router 쿠키 세션 위해 전환 필요
-- **추모 페이지 `/memorial/[id]` 전체 미구현** — 아래 4개 기능 모두 미착수
-  - 고인 기본 정보 및 생존기간 표시
-  - **디지털 앨범** — Swiper.js 슬라이더로 사진·영상 열람 (`memorial_media` 테이블 + `order` 컬럼 활용)
-  - **조문 메시지 작성** — 인증 / 게스트 분기 처리 (`memorial_comments` 테이블)
-  - **조문 메시지 목록 조회** — 최신순 정렬, 작성자 정보 표시
+### 편집 (`/edit/[id]`)
+- 소유자 전용 (인증 + 소유권 검증)
+- 전체 필드 수정, 기존 미디어 유지/삭제 + 새 파일 추가
 
 ---
 
-## 5. 결정 필요 항목
+## 시간대별 배경 시스템
 
-작업 전 제품 의사결정이 먼저 필요한 항목들.
+| 슬롯 | 시간 | 방식 |
+|---|---|---|
+| late-night | 00–04 | 어두운 네이비 + 별 |
+| predawn | 04–06 | 어두운 인디고 힌트 + 별 |
+| dawn | 06–08 | 장밋빛 지평선 힌트 + 별 |
+| morning | 08–11 | 화이트/골드 blob + 그레인 |
+| day | 11–14 | 화이트/핑크/피치 blob + 그레인 |
+| afternoon | 14–17 | 화이트/하늘 blob + 그레인 |
+| evening | 17–19 | 앰버 지평선 힌트 + 별 |
+| dusk | 19–21 | 딥퍼플 지평선 힌트 + 별 |
+| night | 21–24 | 어두운 인디고 힌트 + 별 |
 
-- **personality 스텝 진행 방식** — 현재 첫 칩 선택 즉시 다음 스텝으로 진행. `max=3`이므로 3개 채운 후 명시적 "다음" 버튼 방식으로 바꿀지 결정 필요
-- **`birth`(생년월일) 스텝 처리** — 폼 스텝에는 있으나 `memorials` 테이블에 컬럼이 없음. DB에 컬럼을 추가할지, 폼 스텝을 제거할지 결정 필요
-
----
-
-## 6. 향후 진행 방향 (우선순위 순)
-
-1. **문서 동기화** — CLAUDE.md의 Next.js 버전 / Tailwind 사용 여부 수정, Tailwind devDependency 제거
-2. **결정 항목 처리** — personality UX, `birth` 컬럼 여부 결정 후 반영
-3. **폼 데이터 파이프라인 정상화** — `onComplete(value)` 패턴으로 모든 입력 컴포넌트 수정, 부모에서 `formData` 객체 조립
-4. **localStorage 자동저장 + 재진입 복원 UI** 구현
-5. **닫기(✕) 버튼** 레이아웃 추가
-6. **DateInput 유효성 검사** — 월 / 일 범위 + 생년 / 사망일 논리 검증
-7. **MediaUpload 메모리 누수 수정** — 언마운트 시 `URL.revokeObjectURL()` 일괄 정리
-8. **폼 제출 + Supabase insert** — `memorials` + `memorial_media` 테이블 연동
-9. **미디어 Supabase Storage 업로드** — `Promise.all` 병렬 처리로 속도 최적화
-10. **추모 페이지 `/memorial/[id]`** 마크업 + 데이터 패칭
-    - 고인 기본 정보 및 생존기간 표시
-    - 디지털 앨범 (Swiper.js 슬라이더)
-    - 조문 메시지 작성 폼 (인증 / 게스트 분기)
-    - 조문 메시지 목록 조회
-11. **Claude API 연동** — 성격 키워드 → 추모 메시지 생성 API Route
-12. **OAuth 인증 (카카오 / 네이버 / 구글) + Supabase SSR 클라이언트 전환** — 실명 정보 스코프 승인 필수
-13. **조의금 QR 코드** — `qrcode.react` 설치 후 범용 QR 생성
-14. **시간대별 배경 전환** — 현재 시각 기준으로 배경 색조 변화 (일출 → 낮 → 일몰 → 월출 → 심야)
-15. **49제 D-Day 자동 연산 + 빛 테마 전환 애니메이션** — `date-fns` 설치 후 천도 연출 구현
+- 낮 슬롯(morning/day/afternoon): 다중 blob + SVG 그레인 텍스처
+- 밤 슬롯: 단색 어두운 배경 + 하단 지평선 색 힌트 + 별 반짝임 (5그룹 twinkle 애니메이션)
+- 추모 페이지는 다크모드에서도 라이트 슬롯 강제 고정
 
 ---
 
-## 7. 종합 진단
+## 디자인 시스템
 
-전체 흐름으로 보면 **UI 마크업 레이어는 거의 완성됐지만 데이터 레이어(수집 · 저장 · 인증)가 통째로 비어있는 상태**입니다.
+- CSS 변수: `--background`, `--surface`, `--border`, `--foreground`, `--foreground-muted`, `--primary`
+- `[data-time]` 어트리뷰트로 시간대별 변수 오버라이드
+- 글래스모피즘: `backdrop-filter: blur(12px)` + 반투명 배경/테두리
+- 전체 transition 0.3s ease 통일
+- 반응형: PC(1024px~) / 태블릿(768px~) / 모바일(~767px) 3단계
 
-다음 스프린트의 핵심은 **3번(폼 데이터 수집) → 8번(Supabase insert) → 9번(Storage 업로드)** 으로 이어지는 데이터 파이프라인을 먼저 닫는 것이 가장 시급합니다.
+---
+
+## 주요 파일 구조
+
+```
+src/
+  app/
+    page.tsx                    # 홈
+    LandingPage.tsx             # 비로그인 랜딩
+    globals.css                 # 디자인 토큰 + [data-time] 9단계
+    create/page.tsx             # 생성 폼
+    login/page.tsx              # OAuth 로그인
+    auth/callback/route.ts      # OAuth 콜백
+    memorial/[id]/
+      page.tsx                  # 추모 페이지 (서버)
+      CondolenceSection.tsx     # 조의 섹션 (메시지 + 조의금 토글)
+      MemorialHeader.tsx        # 헤더 + QR 모달
+      MediaSlider.tsx           # Swiper 슬라이더
+      memorial.module.css
+    edit/[id]/
+      page.tsx / EditForm.tsx / edit.module.css
+  components/
+    TimeBackground.tsx          # 시간대별 배경 (body data-time + fixed overlay)
+    MemorialList.tsx            # 추모 목록 + 수정/삭제
+    ChatBubble / ChipSelect / DateInput / FormInput
+    MediaUpload / ProgressBar / SearchSelect
+  lib/
+    supabase/client.ts / server.ts
+    generateMessage.ts          # 성격 기반 static 메시지
+    day49.ts                    # 49제 날짜 계산
+  proxy.ts                      # /create 인증 보호
+```
+
+---
+
+## 남은 작업
+
+### 디자인 개선 (진행 중)
+- 레이아웃 전반 개선
+- 컴포넌트 비주얼 정리
+- 타이포그래피 시스템 정비
+
+### 기능 추가 예정
+- 사망신고 지원: 행안부 표준 PDF 자동완성 + 주민센터 안내 (Kakao Maps)
+- Claude API 고인 메시지 동적 생성 (현재 static)
+
+### 배포 전 필수
+- 실제 도메인 구입 → Supabase Site URL + OAuth Redirect URL 업데이트
+- Vercel 배포
+- Google OAuth 제거 + 통신사 본인인증 연동 (졸업 후)
+- Tailwind devDependency 제거

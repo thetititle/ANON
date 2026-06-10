@@ -92,6 +92,14 @@ a {
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'RIDIBatang';
+  src: url('/fonts/RIDIBatang.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* 변수 */
 
 :root {
@@ -221,8 +229,8 @@ body {
   --background:       #07070E;
   --surface:          rgba(255, 255, 255, 0.07);
   --border:           rgba(255, 255, 255, 0.12);
-  --foreground:       #E8E4F8;
-  --foreground-muted: #7870A8;
+  --foreground:       #F5F3EE;
+  --foreground-muted: rgba(245, 243, 238, 0.5);
 }
 
 /* 새벽 04–06시 */
@@ -230,8 +238,8 @@ body {
   --background:       #080C18;
   --surface:          rgba(255, 255, 255, 0.07);
   --border:           rgba(255, 255, 255, 0.12);
-  --foreground:       #D8DCF8;
-  --foreground-muted: #6878A8;
+  --foreground:       #F5F3EE;
+  --foreground-muted: rgba(245, 243, 238, 0.5);
 }
 
 /* 여명 06–08시 */
@@ -239,8 +247,8 @@ body {
   --background:       #110810;
   --surface:          rgba(255, 255, 255, 0.07);
   --border:           rgba(255, 255, 255, 0.12);
-  --foreground:       #F0E4EC;
-  --foreground-muted: #A07888;
+  --foreground:       #F5F3EE;
+  --foreground-muted: rgba(245, 243, 238, 0.5);
 }
 
 /* 아침 08–11시 */
@@ -271,8 +279,8 @@ body {
   --background:       #120C06;
   --surface:          rgba(255, 255, 255, 0.07);
   --border:           rgba(255, 255, 255, 0.12);
-  --foreground:       #F4ECD8;
-  --foreground-muted: #A08858;
+  --foreground:       #F5F3EE;
+  --foreground-muted: rgba(245, 243, 238, 0.5);
 }
 
 /* 황혼 19–21시 */
@@ -280,8 +288,8 @@ body {
   --background:       #100810;
   --surface:          rgba(255, 255, 255, 0.07);
   --border:           rgba(255, 255, 255, 0.12);
-  --foreground:       #F0E0EC;
-  --foreground-muted: #9870A0;
+  --foreground:       #F5F3EE;
+  --foreground-muted: rgba(245, 243, 238, 0.5);
 }
 
 /* 밤 21–24시 */
@@ -289,8 +297,8 @@ body {
   --background:       #090918;
   --surface:          rgba(255, 255, 255, 0.07);
   --border:           rgba(255, 255, 255, 0.12);
-  --foreground:       #DDE0F8;
-  --foreground-muted: #7080B8;
+  --foreground:       #F5F3EE;
+  --foreground-muted: rgba(245, 243, 238, 0.5);
 }
 
 /* 다크모드에서도 라이트 슬롯은 어두운 텍스트 유지 */

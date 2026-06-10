@@ -7,6 +7,7 @@ import styles from './memorial.module.css'
 import MediaSlider from './MediaSlider'
 import MemorialHeader from './MemorialHeader'
 import CondolenceSection from './CondolenceSection'
+import MemorialSwiper from './MemorialSwiper'
 
 type Props = { params: Promise<{ id: string }> }
 
@@ -85,50 +86,49 @@ export default async function MemorialPage({ params }: Props) {
   const relSuffix = (relCode - 0xAC00) % 28 !== 0 ? '이' : '가'
   const relationshipLabel = `${rel}${relSuffix} 기억하는`
 
-  const content = (
-    <div className={isLightTheme ? styles.lightWrapper : undefined}>
-    <MemorialHeader isOwner={isOwner} />
-    <main className={styles.page}>
+  const portrait = (
+    <>
+      {media && media.length > 0 && (
+        <MediaSlider media={media} />
+      )}
+
       <section className={styles.hero}>
         <p className={styles.relationship}>{relationshipLabel}</p>
         <h1 className={styles.name}>{memorial.deceased_name}</h1>
         <p className={styles.dates}>
           {birthFormatted ? `${birthFormatted} — ${deathFormatted}` : deathFormatted}
         </p>
-        {day49.state === 'before' && (
-          <span className={styles.dDayBadge}>49일까지 D-{day49.daysLeft}</span>
-        )}
         {isLightTheme && (
           <p className={styles.day49Label}>오늘은 49일이에요</p>
         )}
       </section>
 
       {message && (
-        <section className={styles.section}>
-          <div className={`${styles.messageCard} ${isLightTheme ? styles.messageCardLight : ''}`}>
-            {salutation && <p className={styles.salutation}>{salutation}</p>}
-            <p className={styles.messageText}>{message}</p>
-          </div>
-        </section>
+        <div className={`${styles.messageCard} ${isLightTheme ? styles.messageCardLight : ''}`}>
+          {salutation && <p className={styles.salutation}>{salutation}</p>}
+          <p className={styles.messageText}>{message}</p>
+        </div>
       )}
+    </>
+  )
 
-      {media && media.length > 0 && (
-        <section className={styles.section}>
-          <MediaSlider media={media} />
-        </section>
-      )}
+  const messages = (
+    <CondolenceSection
+      memorialId={id}
+      initialComments={comments ?? []}
+      currentUserId={user?.id ?? null}
+      currentUserName={currentUserName}
+      acceptsCondolence={memorial.accepts_condolence ?? false}
+      bankName={memorial.bank_name ?? null}
+      accountNumber={memorial.account_number ?? null}
+      accountHolder={memorial.account_holder ?? null}
+    />
+  )
 
-      <CondolenceSection
-        memorialId={id}
-        initialComments={comments ?? []}
-        currentUserId={user?.id ?? null}
-        currentUserName={currentUserName}
-        acceptsCondolence={memorial.accepts_condolence ?? false}
-        bankName={memorial.bank_name ?? null}
-        accountNumber={memorial.account_number ?? null}
-        accountHolder={memorial.account_holder ?? null}
-      />
-    </main>
+  const content = (
+    <div className={`${styles.memorialWrapper} ${isLightTheme ? styles.lightWrapper : ''}`}>
+      <MemorialHeader isOwner={isOwner} isLoggedIn={!!user} />
+      <MemorialSwiper portrait={portrait} messages={messages} />
     </div>
   )
 
