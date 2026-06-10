@@ -5,7 +5,31 @@ import { useRef, useState } from 'react'
 import { QRCodeCanvas } from 'qrcode.react'
 import styles from './memorial.module.css'
 
-export default function MemorialHeader({ isOwner }: { isOwner: boolean }) {
+function BackIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M19 12H5M5 12l7-7M5 12l7 7" />
+    </svg>
+  )
+}
+
+function ShareIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M7 17L17 7M7 7h10v10" />
+    </svg>
+  )
+}
+
+function LogoutIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" />
+    </svg>
+  )
+}
+
+export default function MemorialHeader({ isOwner, isLoggedIn }: { isOwner: boolean; isLoggedIn: boolean }) {
   const [showModal, setShowModal] = useState(false)
   const [copied, setCopied] = useState(false)
   const qrRef = useRef<HTMLDivElement>(null)
@@ -39,11 +63,19 @@ export default function MemorialHeader({ isOwner }: { isOwner: boolean }) {
   return (
     <>
       <header className={styles.memorialHeader}>
-        <Link href="/" className={styles.homeLink}>← 목록</Link>
+        {isOwner && (
+          <Link href="/" className={styles.headerIconBtn} aria-label="목록으로">
+            <BackIcon />
+          </Link>
+        )}
         <div className={styles.headerActions}>
-          <button className={styles.shareBtn} onClick={() => setShowModal(true)}>공유</button>
-          {isOwner && (
-            <Link href="/logout" className={styles.headerLogout}>로그아웃</Link>
+          <button className={styles.headerIconBtn} onClick={() => setShowModal(true)} aria-label="공유">
+            <ShareIcon />
+          </button>
+          {isLoggedIn && (
+            <Link href="/logout" className={styles.headerIconBtn} aria-label="로그아웃">
+              <LogoutIcon />
+            </Link>
           )}
         </div>
       </header>

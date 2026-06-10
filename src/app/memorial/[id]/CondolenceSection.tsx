@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, type CSSProperties } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import styles from './memorial.module.css'
 
@@ -34,6 +34,47 @@ const BANK_COLORS: Record<string, { bg: string; color: string; label: string }> 
 function getBankBadge(bankName: string) {
   const key = Object.keys(BANK_COLORS).find(k => bankName.includes(k))
   return key ? BANK_COLORS[key] : null
+}
+
+const PETAL_OUT_R = 'M12 8C11.4 6 11.4 3.4 11.4 2.6C11.4 1.4 12.6 1.4 12.6 2.6C12.6 3.4 12.6 6 12 8Z'
+const PETAL_OUT_L = 'M12 8C11.6 6 11 3.4 11.2 2.7C11 1.3 12.2 1.3 12.4 2.5C12.6 3.6 12.4 6 12 8Z'
+const PETAL_OUTER_ANGLES = [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330]
+
+function FlowerIcon() {
+  return (
+    <svg viewBox="0 0 24 36" fill="none" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round">
+      {PETAL_OUTER_ANGLES.map((deg, i) => (
+        <path key={`o${deg}`} d={i % 2 === 0 ? PETAL_OUT_R : PETAL_OUT_L} transform={`rotate(${deg} 12 8)`} />
+      ))}
+      <path d="M12 8C9.9 16.5 9.2 26.5 10.5 34.5" />
+      <path d="M10.3 18.2c2.2.3 3.6-.8 4-2.6-1.8-1-3.6-.6-4.6 1" />
+      <path d="M10 21.4c-2 1-3.8.4-4.5-1.4 1.7-1.3 3.7-1 4.7.4" />
+    </svg>
+  )
+}
+
+function seededRandom(seed: number) {
+  const x = Math.sin(seed * 9301 + 49297) % 1
+  return Math.abs(x)
+}
+
+function flowerStyle(index: number): CSSProperties {
+  const angle = seededRandom(index * 1.1) * Math.PI * 2
+  const radiusX = 14 + seededRandom(index * 2.3) * 34
+  const radiusY = 10 + seededRandom(index * 3.7) * 24
+  const left = Math.min(94, Math.max(6, 50 + Math.cos(angle) * radiusX))
+  const top = Math.min(92, Math.max(30, 58 + Math.sin(angle) * radiusY))
+  const rotate = (seededRandom(index * 5.1) - 0.5) * 50
+  const size = 18 + seededRandom(index * 7.3) * 10
+
+  return {
+    left: `${left}%`,
+    top: `${top}%`,
+    width: `${size}px`,
+    height: `${size * 1.5}px`,
+    transform: `translate(-50%, -50%) rotate(${rotate}deg)`,
+    animationDelay: `${Math.min(index * 0.1, 2)}s`,
+  }
 }
 
 type Comment = {
@@ -138,6 +179,7 @@ export default function CondolenceSection({
 
   return (
     <section className={styles.condolenceSection}>
+      <div className={styles.condolenceScroll}>
       <div className={styles.divider} />
       <p className={styles.condolenceTitle}>조의를 전합니다</p>
 
@@ -255,6 +297,17 @@ export default function CondolenceSection({
           )}
         </div>
       )}
+      </div>
+
+      <div className={styles.flowerArea}>
+        <div className={styles.flowerField}>
+          {comments.map((c, i) => (
+            <span key={c.id} className={styles.flower} style={flowerStyle(i)}>
+              <FlowerIcon />
+            </span>
+          ))}
+        </div>
+      </div>
     </section>
   )
 }
