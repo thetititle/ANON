@@ -37,7 +37,7 @@ export default function MemorialSwiper({ portrait, messages }: Props) {
         <main className={`${styles.page} ${styles.portraitPage}`}>{portrait}</main>
       </SwiperSlide>
       <SwiperSlide className={styles.pageSlide}>
-        <main className={styles.page}>{messages}</main>
+        <main className={`${styles.page} ${styles.messagesPage}`}>{messages}</main>
       </SwiperSlide>
     </Swiper>
   )
