@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import styles from './page.module.css'
 import LandingPage from './LandingPage'
@@ -26,7 +25,6 @@ export default async function Home() {
             <h1 className={styles.title}>안온</h1>
             <p className={styles.hanja}>安溫</p>
           </div>
-          <Link href="/logout" className={styles.logoutBtn}>로그아웃</Link>
         </div>
         <MemorialList initialList={list} />
       </main>

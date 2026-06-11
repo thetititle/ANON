@@ -46,21 +46,34 @@
 }
 
 .oauthBtn {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
   width: 100%;
   padding: 14px 16px;
-  border-radius: var(--radius-md);
+  border-radius: 100px;
   font: var(--text-body) 'Pretendard', sans-serif;
   font-weight: 500;
   cursor: pointer;
-  transition: opacity 0.15s ease;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.oauthBtn::before {
+  content: '';
+  position: absolute;
+  inset: -10px;
+  border-radius: 100px;
+  background: var(--foreground);
+  opacity: 0.08;
+  filter: blur(10px);
+  z-index: -1;
 }
 
 .oauthBtn:hover {
   opacity: 0.85;
+  transform: translateY(-1px);
 }
 
 .kakao {
@@ -75,7 +88,7 @@
 }
 
 .error {
-  font: var(--text-caption) 'Pretendard', sans-serif;
+  font: var(--text-sm) 'Pretendard', sans-serif;
   color: #E53E3E;
   text-align: center;
 }
