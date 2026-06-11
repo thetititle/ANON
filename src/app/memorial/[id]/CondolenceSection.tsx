@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, type CSSProperties } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import { createPortal } from 'react-dom'
 import { createClient } from '@/lib/supabase/client'
 import styles from './memorial.module.css'
 
@@ -40,6 +41,22 @@ const PETAL_OUT_R = 'M12 8C11.4 6 11.4 3.4 11.4 2.6C11.4 1.4 12.6 1.4 12.6 2.6C1
 const PETAL_OUT_L = 'M12 8C11.6 6 11 3.4 11.2 2.7C11 1.3 12.2 1.3 12.4 2.5C12.6 3.6 12.4 6 12 8Z'
 const PETAL_OUTER_ANGLES = [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330]
 
+function ChevronIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 18l6-6-6-6" />
+    </svg>
+  )
+}
+
+function CloseIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 6L6 18M6 6l12 12" />
+    </svg>
+  )
+}
+
 function FlowerIcon() {
   return (
     <svg viewBox="0 0 24 36" fill="none" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round">
@@ -54,26 +71,28 @@ function FlowerIcon() {
 }
 
 function seededRandom(seed: number) {
-  const x = Math.sin(seed * 9301 + 49297) % 1
-  return Math.abs(x)
+  let t = (seed + 0x6D2B79F5) | 0
+  t = Math.imul(t ^ (t >>> 15), t | 1)
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61)
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296
 }
 
-function flowerStyle(index: number): CSSProperties {
-  const angle = seededRandom(index * 1.1) * Math.PI * 2
-  const radiusX = 14 + seededRandom(index * 2.3) * 34
-  const radiusY = 10 + seededRandom(index * 3.7) * 24
-  const left = Math.min(94, Math.max(6, 50 + Math.cos(angle) * radiusX))
+function flowerStyle(seed: number, delayIndex: number): CSSProperties {
+  const angle = (seed * 137.508 + (seededRandom(seed * 5) - 0.5) * 30) * (Math.PI / 180)
+  const radiusX = 16 + seededRandom(seed * 5 + 1) * 44
+  const radiusY = 12 + seededRandom(seed * 5 + 2) * 28
+  const left = Math.min(96, Math.max(4, 50 + Math.cos(angle) * radiusX))
   const top = Math.min(92, Math.max(30, 58 + Math.sin(angle) * radiusY))
-  const rotate = (seededRandom(index * 5.1) - 0.5) * 50
-  const size = 18 + seededRandom(index * 7.3) * 10
+  const rotate = (seededRandom(seed * 5 + 3) - 0.5) * 50
+  const size = 18 + seededRandom(seed * 5 + 4) * 10
 
   return {
-    left: `${left}%`,
-    top: `${top}%`,
-    width: `${size}px`,
-    height: `${size * 1.5}px`,
-    transform: `translate(-50%, -50%) rotate(${rotate}deg)`,
-    animationDelay: `${Math.min(index * 0.1, 2)}s`,
+    left: `${left.toFixed(2)}%`,
+    top: `${top.toFixed(2)}%`,
+    width: `${size.toFixed(2)}px`,
+    height: `${(size * 1.5).toFixed(2)}px`,
+    transform: `translate(-50%, -50%) rotate(${rotate.toFixed(2)}deg)`,
+    animationDelay: `${Math.min(delayIndex * 0.1, 2)}s`,
   }
 }
 
@@ -113,6 +132,92 @@ export default function CondolenceSection({
   const [copied, setCopied] = useState(false)
   const [kakaoCopied, setKakaoCopied] = useState(false)
   const [wantsPayment, setWantsPayment] = useState(false)
+  const [showFormModal, setShowFormModal] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  // 메시지 목록을 스크롤할 땐 Swiper의 페이지 전환(슬라이드/마우스휠)으로 전파되지 않도록 막고,
+  // 스크롤이 위/아래 끝에 닿아 더 이상 움직일 수 없을 때만 Swiper에 제스처를 넘긴다.
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+
+    let startY = 0
+    let locked: boolean | null = null
+
+    const atTop = () => el.scrollTop <= 0
+    const atBottom = () => el.scrollTop + el.clientHeight >= el.scrollHeight - 1
+
+    function onTouchStart(e: TouchEvent) {
+      startY = e.touches[0].clientY
+      locked = null
+    }
+
+    function onTouchMove(e: TouchEvent) {
+      if (locked === false) {
+        e.stopPropagation()
+        return
+      }
+      if (locked === null) {
+        const deltaY = e.touches[0].clientY - startY
+        const reachedEdge = (deltaY > 0 && atTop()) || (deltaY < 0 && atBottom())
+        locked = !reachedEdge
+        if (locked) e.stopPropagation()
+      }
+    }
+
+    function onTouchEnd() {
+      locked = null
+    }
+
+    function onWheel(e: WheelEvent) {
+      const reachedEdge = (e.deltaY < 0 && atTop()) || (e.deltaY > 0 && atBottom())
+      if (!reachedEdge) e.stopPropagation()
+    }
+
+    // 스크롤이 위/아래 끝에 닿는 순간 살짝 튕기는 느낌을 줘서 더 이상 내용이 없음을 알린다.
+    let prevScrollTop = el.scrollTop
+    const bounce = (className: string) => {
+      el.classList.remove(styles.bounceTop, styles.bounceBottom)
+      void el.offsetHeight // 애니메이션 재시작을 위한 강제 리플로우
+      el.classList.add(className)
+      if (navigator.vibrate) navigator.vibrate(8)
+    }
+
+    const onScroll = () => {
+      const top = atTop()
+      const bottom = atBottom()
+      if (top && prevScrollTop > 0) {
+        bounce(styles.bounceTop)
+      } else if (bottom && prevScrollTop + el.clientHeight < el.scrollHeight - 1) {
+        bounce(styles.bounceBottom)
+      }
+      prevScrollTop = el.scrollTop
+    }
+
+    const onAnimationEnd = () => {
+      el.classList.remove(styles.bounceTop, styles.bounceBottom)
+    }
+
+    el.addEventListener('touchstart', onTouchStart, { passive: true })
+    el.addEventListener('touchmove', onTouchMove, { passive: true })
+    el.addEventListener('touchend', onTouchEnd, { passive: true })
+    el.addEventListener('wheel', onWheel, { passive: true })
+    el.addEventListener('scroll', onScroll, { passive: true })
+    el.addEventListener('animationend', onAnimationEnd)
+    return () => {
+      el.removeEventListener('touchstart', onTouchStart)
+      el.removeEventListener('touchmove', onTouchMove)
+      el.removeEventListener('touchend', onTouchEnd)
+      el.removeEventListener('wheel', onWheel)
+      el.removeEventListener('scroll', onScroll)
+      el.removeEventListener('animationend', onAnimationEnd)
+    }
+  }, [])
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const showPayment = acceptsCondolence && bankName && accountNumber && accountHolder
 
@@ -153,6 +258,7 @@ export default function CondolenceSection({
     setComments(prev => [{ ...data, author_name: currentUserName }, ...prev])
     setContent('')
     setIsSubmitting(false)
+    setShowFormModal(false)
   }
 
   async function copyAccount() {
@@ -179,10 +285,11 @@ export default function CondolenceSection({
 
   return (
     <section className={styles.condolenceSection}>
-      <div className={styles.condolenceScroll}>
-      <div className={styles.divider} />
-      <p className={styles.condolenceTitle}>조의를 전합니다</p>
+      <div className={styles.condolenceHeader}>
+        <p className={styles.condolenceTitle}>조의를 전합니다</p>
+      </div>
 
+      <div className={styles.condolenceScroll} ref={scrollRef}>
       {comments.length > 0 && (
         <ul className={styles.commentList}>
           {comments.map((c) => (
@@ -197,67 +304,7 @@ export default function CondolenceSection({
         </ul>
       )}
 
-      {currentUserId ? (
-        <form onSubmit={handleSubmit} className={styles.commentForm}>
-          <textarea
-            className={styles.commentTextarea}
-            placeholder="고인에게 전하고 싶은 말을 남겨주세요."
-            value={content}
-            onChange={e => setContent(e.target.value)}
-            rows={4}
-            maxLength={500}
-          />
-
-          {showPayment && (
-            <div className={styles.paymentToggleArea}>
-              <button
-                type="button"
-                className={styles.paymentToggleBtn}
-                onClick={() => setWantsPayment(v => !v)}
-              >
-                <span>조의금도 함께 전하기</span>
-                <span className={wantsPayment ? styles.chevronUp : styles.chevronDown}>›</span>
-              </button>
-
-              <div className={`${styles.paymentExpanded} ${wantsPayment ? styles.paymentExpandedOpen : ''}`}>
-                <div className={styles.paymentExpandedInner}>
-                  <div className={styles.paymentBtnRow}>
-                    <button type="button" className={styles.paymentBtn} onClick={openToss}>
-                      토스로 보내기
-                    </button>
-                    <button type="button" className={styles.paymentBtn} onClick={openKakaoPay}>
-                      {kakaoCopied ? '복사됨 · 앱 열기' : '카카오페이'}
-                    </button>
-                  </div>
-                  <button type="button" className={styles.paymentBtn} onClick={copyAccount}>
-                    {copied ? '계좌번호 복사됨' : '계좌번호 복사'}
-                  </button>
-                  <p className={styles.paymentMeta}>
-                    {(() => {
-                      const badge = getBankBadge(bankName!)
-                      return badge ? (
-                        <span className={styles.bankBadge} style={{ background: badge.bg, color: badge.color }}>
-                          {badge.label}
-                        </span>
-                      ) : null
-                    })()}
-                    {bankName} · {accountNumber} · {accountHolder}
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {error && <p className={styles.commentError}>{error}</p>}
-          <button
-            type="submit"
-            className={styles.commentSubmit}
-            disabled={isSubmitting || !content.trim()}
-          >
-            {isSubmitting ? '전송 중...' : content.trim() ? '조의를 전합니다' : '내용을 입력해 주세요'}
-          </button>
-        </form>
-      ) : (
+      {!currentUserId && (
         <div className={styles.authPrompt}>
           <p className={styles.authPromptText}>
             올바른 추모 문화를 위해 작성자의 정보를 제공 받습니다.{'\n'}제공받은 정보는 49일 후 삭제됩니다.
@@ -299,10 +346,99 @@ export default function CondolenceSection({
       )}
       </div>
 
+      {currentUserId && (
+        <div className={styles.commentSubmitBar}>
+          <button
+            type="button"
+            className={styles.commentSubmit}
+            onClick={() => setShowFormModal(true)}
+          >
+            작별인사하기
+          </button>
+        </div>
+      )}
+
+      {showFormModal && mounted && createPortal(
+        <div className={styles.commentModalOverlay} onClick={() => setShowFormModal(false)}>
+          <div className={styles.commentModal}>
+            <form id="condolence-form" onSubmit={handleSubmit} className={styles.commentForm} onClick={e => e.stopPropagation()}>
+              <div className={styles.modalCloseRow}>
+                <button type="button" className={styles.modalXBtnForm} onClick={() => setShowFormModal(false)}>
+                  <CloseIcon />
+                </button>
+              </div>
+
+              <textarea
+                className={styles.commentTextarea}
+                placeholder="고인에게 전하고 싶은 말을 남겨주세요."
+                value={content}
+                onChange={e => setContent(e.target.value)}
+                rows={4}
+                maxLength={500}
+                autoFocus
+              />
+
+              {showPayment && (
+                <div className={styles.paymentToggleArea}>
+                  <button
+                    type="button"
+                    className={styles.paymentToggleBtn}
+                    onClick={() => setWantsPayment(v => !v)}
+                  >
+                    <span>조의금도 함께 전하기</span>
+                    <span className={wantsPayment ? styles.chevronUp : styles.chevronDown}>
+                      <ChevronIcon />
+                    </span>
+                  </button>
+
+                  <div className={`${styles.paymentExpanded} ${wantsPayment ? styles.paymentExpandedOpen : ''}`}>
+                    <div className={styles.paymentExpandedInner}>
+                      <div className={styles.paymentBtnRow}>
+                        <button type="button" className={styles.paymentBtn} onClick={openToss}>
+                          토스로 보내기
+                        </button>
+                        <button type="button" className={styles.paymentBtn} onClick={openKakaoPay}>
+                          {kakaoCopied ? '복사됨 · 앱 열기' : '카카오페이'}
+                        </button>
+                      </div>
+                      <button type="button" className={styles.paymentBtn} onClick={copyAccount}>
+                        {copied ? '계좌번호 복사됨' : '계좌번호 복사'}
+                      </button>
+                      <p className={styles.paymentMeta}>
+                        {(() => {
+                          const badge = getBankBadge(bankName!)
+                          return badge ? (
+                            <span className={styles.bankBadge} style={{ background: badge.bg, color: badge.color }}>
+                              {badge.label}
+                            </span>
+                          ) : null
+                        })()}
+                        {bankName} · {accountNumber} · {accountHolder}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {error && <p className={styles.commentError}>{error}</p>}
+
+              <button
+                type="submit"
+                className={styles.commentSubmit}
+                disabled={isSubmitting || !content.trim()}
+              >
+                {isSubmitting ? '전송 중...' : content.trim() ? '작별인사를 남깁니다' : '작별인사를 남겨주세요'}
+              </button>
+            </form>
+          </div>
+        </div>,
+        document.body
+      )}
+
       <div className={styles.flowerArea}>
         <div className={styles.flowerField}>
           {comments.map((c, i) => (
-            <span key={c.id} className={styles.flower} style={flowerStyle(i)}>
+            <span key={c.id} className={styles.flower} style={flowerStyle(comments.length - 1 - i, i)}>
               <FlowerIcon />
             </span>
           ))}
