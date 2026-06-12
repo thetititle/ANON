@@ -34,7 +34,7 @@ export default async function MemorialPage({ params }: Props) {
 
   const { data: commentsRaw } = await supabase
     .from('memorial_comments')
-    .select('id, guest_name, content, created_at, user_id, users(real_name)')
+    .select('id, guest_name, content, created_at, updated_at, user_id, users(real_name)')
     .eq('memorial_id', id)
     .order('created_at', { ascending: false })
 
@@ -45,6 +45,7 @@ export default async function MemorialPage({ params }: Props) {
       id: c.id as string,
       content: c.content as string,
       created_at: c.created_at as string,
+      updated_at: c.updated_at as string | null,
       user_id: c.user_id as string | null,
       author_name: (c.guest_name as string | null) ?? realName ?? null,
     }

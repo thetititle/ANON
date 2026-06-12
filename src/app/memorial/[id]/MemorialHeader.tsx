@@ -29,7 +29,16 @@ function LogoutIcon() {
   )
 }
 
+function AnonIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="8" />
+    </svg>
+  )
+}
+
 export default function MemorialHeader({ isOwner, isLoggedIn }: { isOwner: boolean; isLoggedIn: boolean }) {
+  const [menuOpen, setMenuOpen] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [copied, setCopied] = useState(false)
   const qrRef = useRef<HTMLDivElement>(null)
@@ -62,22 +71,42 @@ export default function MemorialHeader({ isOwner, isLoggedIn }: { isOwner: boole
 
   return (
     <>
-      <header className={styles.memorialHeader}>
-        {isOwner && (
-          <Link href="/" className={styles.headerIconBtn} aria-label="목록으로">
-            <BackIcon />
-          </Link>
-        )}
-        <div className={styles.headerActions}>
-          <button className={styles.headerIconBtn} onClick={() => setShowModal(true)} aria-label="공유">
-            <ShareIcon />
-          </button>
+      {menuOpen && (
+        <div className={styles.fabOverlay} onClick={() => setMenuOpen(false)} />
+      )}
+
+      <header className={`${styles.memorialHeader} ${menuOpen ? styles.memorialHeaderOpen : ''}`}>
+        <div className={`${styles.headerActions} ${menuOpen ? styles.headerActionsOpen : ''}`}>
+          {isOwner && (
+            <div className={styles.headerItem}>
+              <span className={styles.headerLabel}>목록</span>
+              <Link href="/" className={styles.headerIconBtn} aria-label="목록으로" onClick={() => setMenuOpen(false)}>
+                <BackIcon />
+              </Link>
+            </div>
+          )}
+          <div className={styles.headerItem}>
+            <span className={styles.headerLabel}>공유</span>
+            <button className={styles.headerIconBtn} onClick={() => { setShowModal(true); setMenuOpen(false) }} aria-label="공유">
+              <ShareIcon />
+            </button>
+          </div>
           {isLoggedIn && (
-            <Link href="/logout" className={styles.headerIconBtn} aria-label="로그아웃">
-              <LogoutIcon />
-            </Link>
+            <div className={styles.headerItem}>
+              <span className={styles.headerLabel}>로그아웃</span>
+              <Link href="/logout" className={styles.headerIconBtn} aria-label="로그아웃" onClick={() => setMenuOpen(false)}>
+                <LogoutIcon />
+              </Link>
+            </div>
           )}
         </div>
+        <button
+          className={styles.headerIconBtn}
+          onClick={() => setMenuOpen(o => !o)}
+          aria-label={menuOpen ? '메뉴 닫기' : '메뉴 열기'}
+        >
+          <AnonIcon />
+        </button>
       </header>
 
       {showModal && (

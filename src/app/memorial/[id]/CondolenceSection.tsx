@@ -57,6 +57,16 @@ function CloseIcon() {
   )
 }
 
+function RibbonIcon() {
+  return (
+    <svg viewBox="0 0 32 40" fill="none" stroke="currentColor" strokeWidth="0.7" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="16" cy="8" r="6" />
+      <path d="M20 17C14 23 6 31 4 38C7 35 9 33 10 32C11 34 12 36 13 37C16 30 18 23 22 18Z" />
+      <path d="M12 17C18 23 26 31 28 38C25 35 23 33 22 32C21 34 20 36 19 37C16 30 14 23 10 18Z" />
+    </svg>
+  )
+}
+
 function FlowerIcon() {
   return (
     <svg viewBox="0 0 24 36" fill="none" stroke="currentColor" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round">
@@ -100,6 +110,7 @@ type Comment = {
   id: string
   content: string
   created_at: string
+  updated_at: string | null
   user_id: string | null
   author_name: string | null
 }
@@ -134,6 +145,12 @@ export default function CondolenceSection({
   const [wantsPayment, setWantsPayment] = useState(false)
   const [showFormModal, setShowFormModal] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editContent, setEditContent] = useState('')
+  const [isSaving, setIsSaving] = useState(false)
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [actionError, setActionError] = useState<string | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
 
   // 메시지 목록을 스크롤할 땐 Swiper의 페이지 전환(슬라이드/마우스휠)으로 전파되지 않도록 막고,
@@ -144,6 +161,7 @@ export default function CondolenceSection({
 
     let startY = 0
     let locked: boolean | null = null
+    let hasInteracted = false
 
     const atTop = () => el.scrollTop <= 0
     const atBottom = () => el.scrollTop + el.clientHeight >= el.scrollHeight - 1
@@ -151,6 +169,7 @@ export default function CondolenceSection({
     function onTouchStart(e: TouchEvent) {
       startY = e.touches[0].clientY
       locked = null
+      hasInteracted = true
     }
 
     function onTouchMove(e: TouchEvent) {
@@ -181,7 +200,7 @@ export default function CondolenceSection({
       el.classList.remove(styles.bounceTop, styles.bounceBottom)
       void el.offsetHeight // 애니메이션 재시작을 위한 강제 리플로우
       el.classList.add(className)
-      if (navigator.vibrate) navigator.vibrate(8)
+      if (hasInteracted && navigator.vibrate) navigator.vibrate(8)
     }
 
     const onScroll = () => {
@@ -283,10 +302,87 @@ export default function CondolenceSection({
     return new Date(dateStr).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })
   }
 
+  function startEdit(c: Comment) {
+    setConfirmDeleteId(null)
+    setActionError(null)
+    setEditingId(c.id)
+    setEditContent(c.content)
+  }
+
+  function cancelEdit() {
+    setEditingId(null)
+    setEditContent('')
+  }
+
+  async function saveEdit(id: string) {
+    const trimmed = editContent.trim()
+    if (!trimmed) return
+
+    setIsSaving(true)
+    setActionError(null)
+
+    const supabase = createClient()
+    const updatedAt = new Date().toISOString()
+    const { error: updateError } = await supabase
+      .from('memorial_comments')
+      .update({ content: trimmed, updated_at: updatedAt })
+      .eq('id', id)
+
+    if (updateError) {
+      setActionError('수정하지 못했어요. 다시 시도해주세요.')
+      setIsSaving(false)
+      return
+    }
+
+    setComments(prev => prev.map(c => c.id === id ? { ...c, content: trimmed, updated_at: updatedAt } : c))
+    setEditingId(null)
+    setIsSaving(false)
+  }
+
+  async function handleDelete(c: Comment) {
+    setIsDeleting(true)
+    setActionError(null)
+
+    const supabase = createClient()
+    const { error: archiveError } = await supabase
+      .from('memorial_comments_archive')
+      .insert({
+        original_id: c.id,
+        memorial_id: memorialId,
+        user_id: c.user_id,
+        content: c.content,
+        deleted_at: new Date().toISOString(),
+        deleted_by: currentUserId,
+      })
+
+    if (archiveError) {
+      setActionError('삭제하지 못했어요. 다시 시도해주세요.')
+      setIsDeleting(false)
+      return
+    }
+
+    const { error: deleteError } = await supabase
+      .from('memorial_comments')
+      .delete()
+      .eq('id', c.id)
+
+    if (deleteError) {
+      setActionError('삭제하지 못했어요. 다시 시도해주세요.')
+      setIsDeleting(false)
+      return
+    }
+
+    setComments(prev => prev.filter(item => item.id !== c.id))
+    setConfirmDeleteId(null)
+    setIsDeleting(false)
+  }
+
   return (
     <section className={styles.condolenceSection}>
       <div className={styles.condolenceHeader}>
-        <p className={styles.condolenceTitle}>조의를 전합니다</p>
+        <div className={styles.ribbon}>
+          <RibbonIcon />
+        </div>
       </div>
 
       <div className={styles.condolenceScroll} ref={scrollRef}>
@@ -294,14 +390,86 @@ export default function CondolenceSection({
         <ul className={styles.commentList}>
           {comments.map((c) => (
             <li key={c.id} className={styles.commentItem}>
-              <div className={styles.commentMeta}>
-                <span className={styles.commentName}>{c.author_name ?? '익명'}</span>
-                <span className={styles.commentDate}>{formatDate(c.created_at)}</span>
-              </div>
-              <p className={styles.commentContent}>{c.content}</p>
+              {confirmDeleteId === c.id ? (
+                <div className={styles.commentDeleteConfirm}>
+                  <p className={styles.commentDeleteConfirmText}>
+                    이 작별인사를 삭제하시겠어요?<br />삭제 후에는 복구할 수 없어요.
+                  </p>
+                  {actionError && <p className={styles.commentError}>{actionError}</p>}
+                  <div className={styles.commentEditActions}>
+                    <button
+                      type="button"
+                      className={styles.commentEditCancelBtn}
+                      onClick={() => { setConfirmDeleteId(null); setActionError(null) }}
+                      disabled={isDeleting}
+                    >취소</button>
+                    <button
+                      type="button"
+                      className={styles.commentDeleteBtn}
+                      onClick={() => handleDelete(c)}
+                      disabled={isDeleting}
+                    >{isDeleting ? '삭제 중...' : '삭제하기'}</button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className={styles.commentMeta}>
+                    <span className={styles.commentName}>{c.author_name ?? '익명'}</span>
+                    {c.updated_at && <span className={styles.commentEdited}>(수정됨)</span>}
+                    <span className={styles.commentDate}>{formatDate(c.created_at)}</span>
+                    {currentUserId && c.user_id === currentUserId && editingId !== c.id && (
+                      <div className={styles.commentActions}>
+                        <button type="button" className={styles.commentActionBtn} onClick={() => startEdit(c)}>수정</button>
+                        <button
+                          type="button"
+                          className={`${styles.commentActionBtn} ${styles.commentActionBtnDanger}`}
+                          onClick={() => { setConfirmDeleteId(c.id); setActionError(null) }}
+                        >삭제</button>
+                      </div>
+                    )}
+                  </div>
+                  {editingId === c.id ? (
+                    <div className={styles.commentEditForm}>
+                      <textarea
+                        className={styles.commentEditTextarea}
+                        value={editContent}
+                        onChange={e => setEditContent(e.target.value)}
+                        rows={3}
+                        maxLength={500}
+                        autoFocus
+                      />
+                      {actionError && <p className={styles.commentError}>{actionError}</p>}
+                      <div className={styles.commentEditActions}>
+                        <button type="button" className={styles.commentEditCancelBtn} onClick={cancelEdit} disabled={isSaving}>취소</button>
+                        <button
+                          type="button"
+                          className={styles.commentEditSaveBtn}
+                          onClick={() => saveEdit(c.id)}
+                          disabled={isSaving || !editContent.trim()}
+                        >{isSaving ? '저장 중...' : '저장'}</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className={styles.commentContent}>{c.content}</p>
+                  )}
+                </>
+              )}
             </li>
           ))}
         </ul>
+      )}
+
+      {comments.length === 0 && currentUserId && (
+        <div className={styles.emptyCondolence}>
+          <p className={styles.emptyCondolenceText}>아직 작별인사가 없어요</p>
+          <button
+            type="button"
+            className={styles.commentSubmit}
+            onClick={() => setShowFormModal(true)}
+          >
+            작별인사하기
+          </button>
+        </div>
       )}
 
       {!currentUserId && (
@@ -346,7 +514,7 @@ export default function CondolenceSection({
       )}
       </div>
 
-      {currentUserId && (
+      {currentUserId && comments.length > 0 && (
         <div className={styles.commentSubmitBar}>
           <button
             type="button"
