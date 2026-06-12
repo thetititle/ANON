@@ -29,7 +29,8 @@ function lerp(a: number, b: number, t: number): number {
 // hour: 키프레임 중심 시각, top/bottom: 그라데이션 상/하단 색, star: 별 불투명도
 
 const KEYFRAMES: { hour: number; slot: TimeSlot; top: string; bottom: string; star: number }[] = [
-  { hour: 2,    slot: 'late-night', top: '#0E0B22', bottom: '#050510', star: 1    },
+  { hour: 0,    slot: 'late-night', top: '#06050E', bottom: '#020206', star: 1    },
+  { hour: 2,    slot: 'late-night', top: '#0B091B', bottom: '#04040D', star: 1    },
   { hour: 5,    slot: 'predawn',    top: '#1A2747', bottom: '#050814', star: 1    },
   { hour: 7,    slot: 'dawn',       top: '#9A5468', bottom: '#0C0609', star: 0.5  },
   { hour: 9.5,  slot: 'morning',    top: '#FFFCF6', bottom: '#F7F0DD', star: 0    },
@@ -37,7 +38,7 @@ const KEYFRAMES: { hour: number; slot: TimeSlot; top: string; bottom: string; st
   { hour: 15.5, slot: 'afternoon',  top: '#F4FAFD', bottom: '#A8D4F0', star: 0    },
   { hour: 18,   slot: 'evening',    top: '#BD7C52', bottom: '#0D0907', star: 0.4  },
   { hour: 20,   slot: 'dusk',       top: '#7D4F6E', bottom: '#08070E', star: 0.85 },
-  { hour: 22.5, slot: 'night',      top: '#2D1F6E', bottom: '#050510', star: 1    },
+  { hour: 22.5, slot: 'night',      top: '#120C2C', bottom: '#04040D', star: 1    },
 ]
 
 function getCurrentHours(): number {

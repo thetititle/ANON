@@ -8,6 +8,48 @@ import styles from '@/app/page.module.css'
 
 type Memorial = { id: string; deceased_name: string; passed_at: string; relationship: string }
 
+function MoreIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+      <circle cx="12" cy="5" r="1.5" />
+      <circle cx="12" cy="12" r="1.5" />
+      <circle cx="12" cy="19" r="1.5" />
+    </svg>
+  )
+}
+
+function EditIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
+    </svg>
+  )
+}
+
+function TrashIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14z" />
+    </svg>
+  )
+}
+
+function CloseIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 6L6 18M6 6l12 12" />
+    </svg>
+  )
+}
+
+function LogoutIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" />
+    </svg>
+  )
+}
+
 export default function MemorialList({ initialList }: { initialList: Memorial[] }) {
   const router = useRouter()
   const [list, setList] = useState(initialList)
@@ -44,7 +86,7 @@ export default function MemorialList({ initialList }: { initialList: Memorial[] 
     <div className={styles.content}>
       <ul className={styles.list}>
         {list.map((m) => (
-          <li key={m.id} className={styles.cardWrapper}>
+          <li key={m.id}>
             {confirmId === m.id ? (
               <div className={styles.deleteConfirm}>
                 <p className={styles.deleteConfirmText}>
@@ -64,34 +106,57 @@ export default function MemorialList({ initialList }: { initialList: Memorial[] 
                 </div>
               </div>
             ) : (
-              <>
-                <Link href={`/memorial/${m.id}`} className={styles.memorialCard}>
+              <div className={styles.memorialCard}>
+                <Link href={`/memorial/${m.id}`} className={styles.cardLink} aria-label={m.deceased_name} />
+                <div className={styles.cardInfo}>
                   <span className={styles.cardName}>{m.deceased_name}</span>
                   <span className={styles.cardMeta}>{m.relationship} · {m.passed_at.replace(/-/g, '.')}</span>
-                </Link>
-                <button
-                  className={styles.menuBtn}
-                  onClick={(e) => { e.stopPropagation(); setMenuId(menuId === m.id ? null : m.id) }}
-                >⋯</button>
-                {menuId === m.id && (
-                  <div className={styles.menuDropdown}>
+                </div>
+                {menuId === m.id ? (
+                  <div className={styles.inlineActions}>
                     <Link
                       href={`/edit/${m.id}`}
-                      className={styles.menuItem}
+                      className={styles.menuBtn}
                       onClick={() => setMenuId(null)}
-                    >수정하기</Link>
+                      aria-label="수정하기"
+                    >
+                      <EditIcon />
+                    </Link>
                     <button
-                      className={`${styles.menuItem} ${styles.menuItemDelete}`}
+                      className={`${styles.menuBtn} ${styles.menuBtnDelete}`}
                       onClick={(e) => { e.stopPropagation(); setMenuId(null); setConfirmId(m.id) }}
-                    >삭제하기</button>
+                      aria-label="삭제하기"
+                    >
+                      <TrashIcon />
+                    </button>
+                    <button
+                      className={styles.menuBtn}
+                      onClick={(e) => { e.stopPropagation(); setMenuId(null) }}
+                      aria-label="닫기"
+                    >
+                      <CloseIcon />
+                    </button>
                   </div>
+                ) : (
+                  <button
+                    className={styles.menuBtn}
+                    onClick={(e) => { e.stopPropagation(); setMenuId(m.id) }}
+                    aria-label="더보기"
+                  >
+                    <MoreIcon />
+                  </button>
                 )}
-              </>
+              </div>
             )}
           </li>
         ))}
       </ul>
-      <Link href="/create" className={styles.newMemorialLink}>새 추모 공간 만들기</Link>
+      <Link href="/create" className={styles.newMemorialBtn}>새 추모 공간 만들기</Link>
+      <div className={styles.fixedActions}>
+        <Link href="/logout" className={styles.fixedActionBtn} aria-label="로그아웃">
+          <LogoutIcon />
+        </Link>
+      </div>
     </div>
   )
 }

@@ -22,20 +22,59 @@
 
 .memorialHeader {
   position: fixed;
-  right: 20px;
-  bottom: 24px;
-  z-index: 50;
+  right: 1.25rem;
+  bottom: 1.5rem;
+  z-index: 60;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 12px;
+  align-items: flex-end;
 }
 
 .headerActions {
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(0.5rem);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.headerActionsOpen {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.headerItem {
+  display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.5rem;
+}
+
+.headerLabel {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground);
+  white-space: nowrap;
+}
+
+.memorialHeaderOpen .headerIconBtn {
+  opacity: 1;
+}
+
+.fabOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 55;
+  animation: fabOverlayFadeIn 0.2s ease;
+}
+
+@keyframes fabOverlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .headerIconBtn {
@@ -43,8 +82,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: 50%;
   background: var(--surface);
   border: 1px solid var(--border);
@@ -57,11 +96,11 @@
 .headerIconBtn::before {
   content: '';
   position: absolute;
-  inset: -10px;
+  inset: -0.625rem;
   border-radius: 50%;
   background: var(--foreground);
   opacity: 0.08;
-  filter: blur(10px);
+  filter: blur(0.625rem);
   z-index: -1;
 }
 
@@ -72,15 +111,15 @@
 }
 
 .headerIconBtn svg {
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
 }
 
 .page {
-  max-width: 480px;
+  max-width: 30rem;
   width: 100%;
   margin: 0 auto;
-  padding: 0 20px 80px;
+  padding: 0 1.25rem 5rem;
 }
 
 .portraitPage {
@@ -89,15 +128,15 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 32px;
+  gap: 1.5rem;
 }
 
 .hero {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-  gap: 10px;
+  align-items: center;
+  text-align: center;
+  gap: 0.375rem;
 }
 
 .relationship {
@@ -108,7 +147,7 @@
 
 .name {
   font-family: 'RIDIBatang', serif;
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--foreground);
@@ -124,24 +163,24 @@
   font: var(--text-sm) 'Pretendard', sans-serif;
   color: var(--foreground-muted);
   font-style: italic;
-  margin-top: 4px;
+  margin-top: 0.25rem;
 }
 
 .section {
-  margin-top: 32px;
+  margin-top: 2rem;
 }
 
 .tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 0.5rem;
   justify-content: center;
 }
 
 .tag {
-  padding: 6px 14px;
+  padding: 0.375rem 0.875rem;
   border: 1px solid var(--border);
-  border-radius: 100px;
+  border-radius: 6.25rem;
   font: var(--text-sm) 'Pretendard', sans-serif;
   color: var(--foreground-muted);
 }
@@ -149,13 +188,13 @@
 /* Swiper */
 .slider {
   width: 100%;
-  -webkit-mask-image: radial-gradient(ellipse 55% 50% at 50% 50%, #000 35%, transparent 100%);
-  mask-image: radial-gradient(ellipse 55% 50% at 50% 50%, #000 35%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 66% 62% at 50% 50%, #000 53%, transparent 100%);
+  mask-image: radial-gradient(ellipse 66% 62% at 50% 50%, #000 53%, transparent 100%);
 }
 
 .mediaWrapper {
   position: relative;
-  height: 36vh;
+  height: 52vh;
   aspect-ratio: 4 / 5;
   max-width: 100%;
   margin: 0 auto;
@@ -175,8 +214,8 @@
   mix-blend-mode: color;
   pointer-events: none;
   transition: background 1s ease;
-  -webkit-mask-image: radial-gradient(ellipse 55% 50% at 50% 50%, transparent 35%, #000 100%);
-  mask-image: radial-gradient(ellipse 55% 50% at 50% 50%, transparent 35%, #000 100%);
+  -webkit-mask-image: radial-gradient(ellipse 66% 62% at 50% 50%, transparent 53%, #000 100%);
+  mask-image: radial-gradient(ellipse 66% 62% at 50% 50%, transparent 53%, #000 100%);
 }
 
 :global(.swiper-pagination-bullet) {
@@ -195,8 +234,8 @@
 .salutation {
   font: var(--text-sm) 'Pretendard', sans-serif;
   color: var(--foreground-muted);
-  text-align: left;
-  margin-bottom: 12px;
+  text-align: center;
+  margin-bottom: 0.75rem;
 }
 
 .messageText {
@@ -205,23 +244,15 @@
   line-height: 1.8;
   word-break: keep-all;
   white-space: pre-line;
-  text-align: left;
-}
-
-/* 조의를 전합니다 */
-.condolenceTitle {
-  font: var(--text-body) 'Pretendard', sans-serif;
-  font-weight: 600;
-  color: var(--foreground);
-  margin-bottom: 24px;
+  text-align: center;
 }
 
 .paymentSection {
-  margin-top: 32px;
+  margin-top: 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .paymentToggleArea {
@@ -234,9 +265,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 0.375rem;
   width: 100%;
-  padding: 12px 16px;
+  padding: 0.75rem 1rem;
   background: none;
   border: none;
   font: var(--text-sm) 'Pretendard', sans-serif;
@@ -252,8 +283,8 @@
 
 .chevronDown svg,
 .chevronUp svg {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 .chevronDown {
@@ -268,7 +299,7 @@
   display: grid;
   grid-template-rows: 0fr;
   opacity: 0;
-  transform: translateY(-6px);
+  transform: translateY(-0.375rem);
   transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1),
               opacity 0.3s ease,
               transform 0.3s ease;
@@ -284,16 +315,16 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .paymentExpandedOpen .paymentExpandedInner {
-  padding-top: 10px;
+  padding-top: 0.625rem;
 }
 
 .paymentBtn {
   width: 100%;
-  padding: 14px;
+  padding: 0.875rem;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
@@ -312,7 +343,7 @@
 .paymentBtnRow {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
   width: 100%;
 }
 
@@ -321,7 +352,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 0.375rem;
   font: var(--text-sm) 'Pretendard', sans-serif;
   color: var(--foreground-muted);
 }
@@ -330,8 +361,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: 2px 0.375rem;
+  border-radius: 0.25rem;
   font-size: 0.625rem;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -348,13 +379,45 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  margin: 0 -20px;
+  margin: 0 -1.25rem;
 }
 
 .condolenceHeader {
   flex-shrink: 0;
-  margin-top: 40px;
-  padding: 0 20px;
+  margin-top: 2.5rem;
+  padding: 0 1.25rem;
+  display: flex;
+  justify-content: center;
+}
+
+.ribbon {
+  color: var(--foreground);
+  opacity: 0.7;
+}
+
+.ribbon svg {
+  width: 2.5rem;
+  height: 3.125rem;
+  display: block;
+}
+
+.emptyCondolence {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+}
+
+.emptyCondolenceText {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+}
+
+.emptyCondolence .commentSubmit {
+  width: auto;
+  padding: 0.875rem 2rem;
 }
 
 .condolenceScroll {
@@ -364,9 +427,9 @@
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   border-top: 1px solid var(--border);
-  box-shadow: inset 0 6px 8px -8px rgba(0, 0, 0, 0.5);
-  margin-top: 24px;
-  padding: 24px 20px;
+  box-shadow: inset 0 0.375rem 0.5rem -0.5rem rgba(0, 0, 0, 0.5);
+  margin-top: 1.5rem;
+  padding: 1.5rem 1.25rem;
 }
 
 .condolenceScroll::-webkit-scrollbar {
@@ -384,27 +447,27 @@
 
 @keyframes scrollBounceTop {
   0%   { transform: translateY(0); }
-  35%  { transform: translateY(10px); }
+  35%  { transform: translateY(0.625rem); }
   100% { transform: translateY(0); }
 }
 
 @keyframes scrollBounceBottom {
   0%   { transform: translateY(0); }
-  35%  { transform: translateY(-10px); }
+  35%  { transform: translateY(-0.625rem); }
   100% { transform: translateY(0); }
 }
 
 .commentSubmitBar {
   flex-shrink: 0;
-  padding: 12px 20px;
+  padding: 0.75rem 1.25rem;
 }
 
 /* ── 국화꽃 영역 ── */
 .flowerArea {
   position: relative;
   flex-shrink: 0;
-  height: 168px;
-  padding: 0 20px;
+  height: 15dvh;
+  padding: 0 1.25rem;
   pointer-events: none;
   overflow: hidden;
 }
@@ -437,19 +500,19 @@
   display: flex;
   flex-direction: column;
   gap: 0;
-  margin-bottom: 32px;
+  margin-bottom: 2rem;
 }
 
 .commentItem {
-  padding: 20px 0;
+  padding: 1.25rem 0;
   border-bottom: 1px solid var(--border);
 }
 
 .commentMeta {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
   flex-wrap: wrap;
 }
 
@@ -470,6 +533,11 @@
   margin-left: auto;
 }
 
+.commentEdited {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+}
+
 .commentContent {
   font: var(--text-body) 'Pretendard', sans-serif;
   color: var(--foreground);
@@ -478,15 +546,130 @@
   white-space: pre-line;
 }
 
+/* 댓글 수정/삭제 */
+.commentActions {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.commentActionBtn {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.commentActionBtn:hover {
+  color: var(--foreground);
+}
+
+.commentActionBtnDanger:hover {
+  color: #E53E3E;
+}
+
+.commentEditForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.commentEditTextarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font: var(--text-body) 'Pretendard', sans-serif;
+  color: var(--foreground);
+  resize: none;
+  line-height: 1.7;
+}
+
+.commentEditActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.commentEditCancelBtn {
+  flex: 1;
+  padding: 0.625rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground);
+  cursor: pointer;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.commentEditCancelBtn:hover:not(:disabled) {
+  background: var(--border);
+  transform: translateY(-1px);
+}
+
+.commentEditSaveBtn {
+  flex: 1;
+  padding: 0.625rem;
+  background: var(--foreground);
+  border: none;
+  border-radius: var(--radius-sm);
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  font-weight: 600;
+  color: var(--background);
+  cursor: pointer;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.commentEditSaveBtn:hover:not(:disabled) {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+.commentDeleteBtn {
+  flex: 1;
+  padding: 0.625rem;
+  background: #E53E3E;
+  border: none;
+  border-radius: var(--radius-sm);
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.commentDeleteBtn:hover:not(:disabled) {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+.commentEditCancelBtn:disabled,
+.commentEditSaveBtn:disabled,
+.commentDeleteBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.commentDeleteConfirmText {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground);
+  line-height: 1.7;
+  margin-bottom: 0.75rem;
+}
+
 .commentForm {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .commentInput {
   width: 100%;
-  padding: 12px 16px;
+  padding: 0.75rem 1rem;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
@@ -500,7 +683,7 @@
 
 .commentTextarea {
   width: 100%;
-  padding: 12px 16px;
+  padding: 0.75rem 1rem;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
@@ -522,11 +705,11 @@
 .commentSubmit {
   position: relative;
   width: 100%;
-  padding: 14px;
+  padding: 0.875rem;
   background: var(--surface);
   color: var(--foreground);
   border: 1px solid var(--border);
-  border-radius: 100px;
+  border-radius: 6.25rem;
   font: var(--text-body) 'Pretendard', sans-serif;
   font-weight: 600;
   opacity: 1;
@@ -537,11 +720,11 @@
 .commentSubmit::before {
   content: '';
   position: absolute;
-  inset: -10px;
-  border-radius: 100px;
+  inset: -0.625rem;
+  border-radius: 6.25rem;
   background: var(--foreground);
   opacity: 0.08;
-  filter: blur(10px);
+  filter: blur(0.625rem);
   z-index: -1;
 }
 
@@ -556,11 +739,11 @@
 
 .qrSection {
   display: flex;
-  gap: 24px;
-  padding: 28px 0;
+  gap: 1.5rem;
+  padding: 1.75rem 0;
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
-  margin-bottom: 32px;
+  margin-bottom: 2rem;
   align-items: flex-start;
 }
 
@@ -568,14 +751,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 0.625rem;
   flex-shrink: 0;
 }
 
 .accountBlock {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0.25rem;
   flex: 1;
   justify-content: center;
 }
@@ -587,7 +770,7 @@
 }
 
 .qrBox {
-  padding: 12px;
+  padding: 0.75rem;
   background: #fff;
   border-radius: var(--radius-sm);
 }
@@ -595,7 +778,7 @@
 .qrBank {
   font: var(--text-sm) 'Pretendard', sans-serif;
   color: var(--foreground-muted);
-  margin-top: 8px;
+  margin-top: 0.5rem;
 }
 
 .qrAccount {
@@ -611,8 +794,8 @@
 }
 
 .copyBtn {
-  margin-top: 10px;
-  padding: 10px 16px;
+  margin-top: 0.625rem;
+  padding: 0.625rem 1rem;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
@@ -630,7 +813,7 @@
 .authPrompt {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .authPromptText {
@@ -644,12 +827,12 @@
 .authButtons {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .authBtn {
   width: 100%;
-  padding: 14px;
+  padding: 0.875rem;
   border: none;
   border-radius: var(--radius-md);
   font: var(--text-body) 'Pretendard', sans-serif;
@@ -686,13 +869,13 @@
 .modal {
   background: var(--surface);
   border-radius: var(--radius-md);
-  padding: 20px 24px 24px;
+  padding: 1.25rem 1.5rem 1.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
-  width: calc(100% - 48px);
-  max-width: 300px;
+  gap: 1rem;
+  width: calc(100% - 3rem);
+  max-width: 18.75rem;
 }
 
 .modalHeader {
@@ -721,23 +904,23 @@
   inset: 0;
   z-index: 200;
   background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(16px);
+  backdrop-filter: blur(1rem);
 }
 
 .commentModal {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 16px;
+  gap: 1rem;
   width: 100%;
   height: 100%;
-  padding: 20px;
+  padding: 1.25rem;
   overflow-y: auto;
 }
 
 .commentModal .commentForm {
   width: 100%;
-  max-width: 400px;
+  max-width: 25rem;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -759,18 +942,18 @@
 }
 
 .modalXBtnForm svg {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 .commentModal .commentTextarea {
   flex: none;
-  min-height: 120px;
+  min-height: 7.5rem;
 }
 
 @media (min-width: 480px) {
   .commentModal .commentTextarea {
-    min-height: 200px;
+    min-height: 12.5rem;
   }
 }
 
@@ -778,12 +961,12 @@
   font: var(--text-sm) 'Pretendard', sans-serif;
   color: var(--foreground-muted);
   opacity: 0.6;
-  margin-top: -4px;
+  margin-top: -0.25rem;
 }
 
 .modalCopyBtn {
   width: 100%;
-  padding: 13px;
+  padding: 0.8125rem;
   background: var(--foreground);
   color: var(--background);
   border: none;
@@ -812,7 +995,7 @@
 }
 
 .day49Label {
-  margin-top: 4px;
+  margin-top: 0.25rem;
   font: var(--text-sm) 'Pretendard', sans-serif;
   color: var(--light-primary);
   font-weight: 600;

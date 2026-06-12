@@ -1,8 +1,8 @@
 .page {
-  max-width: 480px;
+  max-width: 30rem;
   width: 100%;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 1.25rem;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
@@ -12,13 +12,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 24px 0 0;
+  padding: 1.5rem 0 0;
 }
 
 .logo {
   display: flex;
   align-items: baseline;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .title {
@@ -32,11 +32,6 @@
   font-size: 0.75rem;
   color: var(--foreground-muted);
   letter-spacing: 0.1em;
-}
-
-.logoutBtn {
-  font: var(--text-sm) 'Pretendard', sans-serif;
-  color: var(--foreground-muted);
 }
 
 /* ── 랜딩 애니메이션 ── */
@@ -63,7 +58,7 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .landingLogo {
@@ -78,8 +73,8 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 40px 0 32px;
-  gap: 16px;
+  padding: 2.5rem 0 2rem;
+  gap: 1rem;
 }
 
 .desc {
@@ -96,108 +91,193 @@
 .list {
   display: flex;
   flex-direction: column;
+  gap: 0;
 }
 
 /* 카드 + 액션 메뉴 */
-.cardWrapper {
+.memorialCard {
+  position: relative;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1.25rem 0;
   border-bottom: 1px solid var(--border);
-  position: relative;
-}
-
-.memorialCard {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 20px 0;
-  transition: opacity 0.15s ease;
+  transition: transform 0.3s ease;
 }
 
 .memorialCard:hover {
-  opacity: 0.6;
+  transform: translateY(-1px);
+}
+
+.cardLink {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.cardInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+  min-width: 0;
 }
 
 .menuBtn {
-  padding: 8px 0 8px 16px;
-  color: var(--foreground-muted);
-  font-size: 1.1rem;
-  letter-spacing: 0.1em;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  opacity: 0.4;
+  cursor: pointer;
+  transition: transform 0.3s ease, background 0.3s ease, opacity 0.3s ease;
+}
+
+.menuBtn::before {
+  content: '';
+  position: absolute;
+  inset: -0.625rem;
+  border-radius: 50%;
+  background: var(--foreground);
+  opacity: 0.08;
+  filter: blur(0.625rem);
+  z-index: -1;
+}
+
+.menuBtn:hover {
+  background: var(--border);
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+.menuBtn svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.menuBtnDelete {
+  color: #E53E3E;
+}
+
+.inlineActions {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   flex-shrink: 0;
 }
 
-.menuDropdown {
-  position: absolute;
-  right: 0;
-  top: calc(100% - 8px);
-  min-width: 120px;
+/* 우측 하단 고정 아이콘 스택 (로그아웃) - 추모 페이지 헤더와 동일한 스타일 */
+.fixedActions {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.5rem;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.fixedActionBtn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-  z-index: 100;
-  overflow: hidden;
-}
-
-.menuItem {
-  display: block;
-  width: 100%;
-  padding: 12px 16px;
-  font: var(--text-sm) 'Pretendard', sans-serif;
   color: var(--foreground);
-  text-align: left;
-  background: none;
-  border: none;
+  opacity: 0.4;
   cursor: pointer;
+  transition: transform 0.3s ease, background 0.3s ease, opacity 0.3s ease;
 }
 
-.menuItem:hover {
-  background: var(--background);
+.fixedActionBtn::before {
+  content: '';
+  position: absolute;
+  inset: -0.625rem;
+  border-radius: 50%;
+  background: var(--foreground);
+  opacity: 0.08;
+  filter: blur(0.625rem);
+  z-index: -1;
 }
 
-.menuItemDelete {
-  color: #E53E3E;
+.fixedActionBtn:hover {
+  background: var(--border);
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+.fixedActionBtn svg {
+  width: 1.125rem;
+  height: 1.125rem;
 }
 
 /* 삭제 확인 */
 .deleteConfirm {
-  padding: 20px 0;
+  padding: 1.25rem 0;
   width: 100%;
+  border-bottom: 1px solid var(--border);
 }
 
 .deleteConfirmText {
   font: var(--text-sm) 'Pretendard', sans-serif;
   color: var(--foreground);
   line-height: 1.7;
-  margin-bottom: 14px;
+  margin-bottom: 0.875rem;
 }
 
 .deleteConfirmActions {
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .deleteCancelBtn {
   flex: 1;
-  padding: 10px;
+  padding: 0.625rem;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   font: var(--text-sm) 'Pretendard', sans-serif;
   color: var(--foreground);
   cursor: pointer;
+  transition: transform 0.3s ease, background 0.3s ease;
 }
 
 .deleteConfirmBtn {
   flex: 1;
-  padding: 10px;
+  padding: 0.625rem;
   background: #E53E3E;
   border: none;
   border-radius: var(--radius-sm);
   font: var(--text-sm) 'Pretendard', sans-serif;
   color: #fff;
   cursor: pointer;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.deleteCancelBtn:hover:not(:disabled) {
+  background: var(--border);
+  transform: translateY(-1px);
+}
+
+.deleteConfirmBtn:hover:not(:disabled) {
+  opacity: 0.85;
+  transform: translateY(-1px);
 }
 
 .deleteConfirmBtn:disabled,
@@ -223,31 +303,34 @@
   color: var(--foreground-muted);
 }
 
-.createBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  background: var(--foreground);
-  color: var(--background);
-  border-radius: var(--radius-md);
+.newMemorialBtn {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0.875rem;
+  background: var(--surface);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: 6.25rem;
   font: var(--text-body) 'Pretendard', sans-serif;
   font-weight: 600;
-  transition: opacity 0.15s ease;
-  margin-top: auto;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease, background 0.3s ease;
 }
 
-.createBtn:hover {
-  opacity: 0.85;
+.newMemorialBtn::before {
+  content: '';
+  position: absolute;
+  inset: -0.625rem;
+  border-radius: 6.25rem;
+  background: var(--foreground);
+  opacity: 0.08;
+  filter: blur(0.625rem);
+  z-index: -1;
 }
 
-.newMemorialLink {
-  font: var(--text-sm) 'Pretendard', sans-serif;
-  color: var(--foreground-muted);
-  margin-top: 24px;
-  align-self: flex-start;
-}
-
-.newMemorialLink:hover {
-  color: var(--foreground);
+.newMemorialBtn:hover {
+  background: var(--border);
+  transform: translateY(-1px);
 }
