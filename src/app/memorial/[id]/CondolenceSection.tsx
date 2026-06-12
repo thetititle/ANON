@@ -151,6 +151,8 @@ export default function CondolenceSection({
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
   const [actionError, setActionError] = useState<string | null>(null)
+  const [visibleCount, setVisibleCount] = useState(10)
+  const [menuId, setMenuId] = useState<string | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
 
   // 메시지 목록을 스크롤할 땐 Swiper의 페이지 전환(슬라이드/마우스휠)으로 전파되지 않도록 막고,
@@ -388,7 +390,7 @@ export default function CondolenceSection({
       <div className={styles.condolenceScroll} ref={scrollRef}>
       {comments.length > 0 && (
         <ul className={styles.commentList}>
-          {comments.map((c) => (
+          {comments.slice(0, visibleCount).map((c) => (
             <li key={c.id} className={styles.commentItem}>
               {confirmDeleteId === c.id ? (
                 <div className={styles.commentDeleteConfirm}>
@@ -417,16 +419,6 @@ export default function CondolenceSection({
                     <span className={styles.commentName}>{c.author_name ?? '익명'}</span>
                     {c.updated_at && <span className={styles.commentEdited}>(수정됨)</span>}
                     <span className={styles.commentDate}>{formatDate(c.created_at)}</span>
-                    {currentUserId && c.user_id === currentUserId && editingId !== c.id && (
-                      <div className={styles.commentActions}>
-                        <button type="button" className={styles.commentActionBtn} onClick={() => startEdit(c)}>수정</button>
-                        <button
-                          type="button"
-                          className={`${styles.commentActionBtn} ${styles.commentActionBtnDanger}`}
-                          onClick={() => { setConfirmDeleteId(c.id); setActionError(null) }}
-                        >삭제</button>
-                      </div>
-                    )}
                   </div>
                   {editingId === c.id ? (
                     <div className={styles.commentEditForm}>
@@ -450,13 +442,49 @@ export default function CondolenceSection({
                       </div>
                     </div>
                   ) : (
-                    <p className={styles.commentContent}>{c.content}</p>
+                    <div className={styles.commentContentRow}>
+                      <p className={styles.commentContent}>{c.content}</p>
+                      {currentUserId && c.user_id === currentUserId && (
+                        <div className={styles.commentMoreWrap}>
+                          <button
+                            type="button"
+                            className={styles.commentMoreBtn}
+                            onClick={() => setMenuId(m => m === c.id ? null : c.id)}
+                            aria-label="더보기"
+                          >⋯</button>
+                          {menuId === c.id && (
+                            <div className={styles.commentMoreMenu}>
+                              <button
+                                type="button"
+                                className={styles.commentActionBtn}
+                                onClick={() => { startEdit(c); setMenuId(null) }}
+                              >수정</button>
+                              <button
+                                type="button"
+                                className={`${styles.commentActionBtn} ${styles.commentActionBtnDanger}`}
+                                onClick={() => { setConfirmDeleteId(c.id); setActionError(null); setMenuId(null) }}
+                              >삭제</button>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   )}
                 </>
               )}
             </li>
           ))}
         </ul>
+      )}
+
+      {comments.length > visibleCount && (
+        <button
+          type="button"
+          className={styles.loadMoreBtn}
+          onClick={() => setVisibleCount(c => c + 10)}
+        >
+          더보기 ({comments.length - visibleCount})
+        </button>
       )}
 
       {comments.length === 0 && currentUserId && (
