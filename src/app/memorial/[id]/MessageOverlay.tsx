@@ -5,7 +5,7 @@ import { FaHandPointer } from 'react-icons/fa'
 import styles from './messageOverlay.module.css'
 
 const REPLAY_KEY_PREFIX = 'anon_message_replay_'
-const DISSOLVE_MS = 600
+const DISSOLVE_MS = 1350
 const PARTICLE_COUNT = 36
 
 type Props = {
@@ -31,7 +31,7 @@ export default function MessageOverlay({ memorialId, salutation, message, isLigh
       left: Math.random() * 100,
       top: Math.random() * 100,
       size: 2 + Math.random() * 4,
-      delay: Math.random() * 0.2,
+      delay: Math.random() * 0.3,
       dx: (Math.random() - 0.5) * 80,
       dy: (Math.random() - 0.5) * 80 - 30,
     })),
