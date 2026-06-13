@@ -42,6 +42,12 @@ const KEYFRAMES: { hour: number; slot: TimeSlot; top: string; bottom: string; st
 ]
 
 function getCurrentHours(): number {
+  // 디버그용: ?hour=17 같은 쿼리 파라미터로 특정 시각을 강제 미리보기
+  const override = new URLSearchParams(window.location.search).get('hour')
+  if (override !== null) {
+    const h = Number(override)
+    if (!Number.isNaN(h)) return ((h % 24) + 24) % 24
+  }
   const now = new Date()
   return now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600
 }
