@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useEffect, useState, type ReactNode } from 'react'
+import InfoOverlay from './InfoOverlay'
 import styles from './siteFab.module.css'
 
 const ONBOARDING_KEY = 'anon-onboarding-seen'
@@ -39,21 +40,14 @@ function LogoutIcon() {
   )
 }
 
-function DocIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-      <path d="M14 2v6h6M9 13h6M9 17h6" />
-    </svg>
-  )
-}
-
 export default function SiteFab({ isLoggedIn, items = [] }: { isLoggedIn: boolean; items?: FabMenuItem[] }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [showInfo, setShowInfo] = useState(false)
+  const [infoInitialView, setInfoInitialView] = useState<'menu' | 'about'>('menu')
 
   useEffect(() => {
     if (!localStorage.getItem(ONBOARDING_KEY)) {
+      setInfoInitialView('about')
       setShowInfo(true)
       localStorage.setItem(ONBOARDING_KEY, '1')
     }
@@ -81,17 +75,9 @@ export default function SiteFab({ isLoggedIn, items = [] }: { isLoggedIn: boolea
               )}
             </div>
           ))}
-          {isLoggedIn && (
-            <div className={styles.fabItem}>
-              <span className={styles.fabLabel}>사망신고 안내</span>
-              <Link href="/death-registration" className={styles.fabIconBtn} aria-label="사망신고 안내" onClick={() => setMenuOpen(false)}>
-                <DocIcon />
-              </Link>
-            </div>
-          )}
           <div className={styles.fabItem}>
             <span className={styles.fabLabel}>안내</span>
-            <button className={styles.fabIconBtn} onClick={() => { setShowInfo(true); setMenuOpen(false) }} aria-label="안내">
+            <button className={styles.fabIconBtn} onClick={() => { setInfoInitialView('menu'); setShowInfo(true); setMenuOpen(false) }} aria-label="안내">
               <InfoIcon />
             </button>
           </div>
@@ -113,29 +99,7 @@ export default function SiteFab({ isLoggedIn, items = [] }: { isLoggedIn: boolea
         </button>
       </div>
 
-      {showInfo && (
-        <div className={styles.modalOverlay} onClick={() => setShowInfo(false)}>
-          <div className={`${styles.modal} ${styles.infoModal}`} onClick={e => e.stopPropagation()}>
-            <div className={styles.modalHeader}>
-              <p className={styles.modalTitle}>안온을 더 깊이 느껴보세요</p>
-              <button className={styles.modalXBtn} onClick={() => setShowInfo(false)}>✕</button>
-            </div>
-            <div className={styles.infoList}>
-              <div className={styles.infoItem}>
-                <p className={styles.infoItemTitle}>시간의 흐름을 담은 배경</p>
-                <p className={styles.infoItemDesc}>지금 이 시간에 맞춰 페이지의 배경이 천천히 바뀌어요.</p>
-              </div>
-              <div className={styles.infoItem}>
-                <p className={styles.infoItemTitle}>49재, 빛이 되는 날</p>
-                <p className={styles.infoItemDesc}>고인이 떠난 지 49일째 되는 날, 페이지가 따뜻한 빛의 테마로 바뀌어요.</p>
-              </div>
-            </div>
-            <button className={styles.modalCopyBtn} onClick={() => setShowInfo(false)}>
-              확인했어요
-            </button>
-          </div>
-        </div>
-      )}
+      <InfoOverlay open={showInfo} onClose={() => setShowInfo(false)} isLoggedIn={isLoggedIn} initialView={infoInitialView} />
     </>
   )
 }
