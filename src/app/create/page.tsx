@@ -144,7 +144,7 @@ export default function CreatePage() {
       }
 
       localStorage.removeItem('anon-create-form')
-      router.push(`/memorial/${memorial.id}/message`)
+      router.push(`/memorial/${memorial.id}`)
     } catch {
       setSubmitError('문제가 발생했어요. 다시 시도해주세요.')
       setIsSubmitting(false)

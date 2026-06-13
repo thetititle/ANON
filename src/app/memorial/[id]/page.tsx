@@ -3,12 +3,14 @@ import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import { isMobileDevice } from '@/lib/isMobileDevice'
 import { getDay49Status } from '@/lib/day49'
+import { generateMemorialMessage } from '@/lib/generateMessage'
 import TimeBackground from '@/components/TimeBackground'
 import styles from './memorial.module.css'
 import MediaSlider from './MediaSlider'
 import MemorialHeader from './MemorialHeader'
 import CondolenceSection from './CondolenceSection'
 import MemorialSwiper from './MemorialSwiper'
+import MessageOverlay from './MessageOverlay'
 import MobileOnlyNotice from './MobileOnlyNotice'
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
@@ -116,6 +118,23 @@ export default async function MemorialPage({ params }: Props) {
   const day49 = getDay49Status(memorial.passed_at)
   const isLightTheme = day49.state === 'today'
 
+  // DB 저장 메시지 우선, 없으면 static fallback
+  const overlayMessage = isLightTheme
+    ? (memorial.message_49 ?? (memorial.personality_tags?.length > 0
+        ? generateMemorialMessage(memorial.deceased_name, memorial.personality_tags, id, true)
+        : ''))
+    : (memorial.message ?? (memorial.personality_tags?.length > 0
+        ? generateMemorialMessage(memorial.deceased_name, memorial.personality_tags, id, false)
+        : ''))
+
+  const nickname = memorial.nickname_for_user ?? ''
+  const suffix = nickname ? (() => {
+    const code = nickname.charCodeAt(nickname.length - 1)
+    if (code < 0xAC00 || code > 0xD7A3) return '야'
+    return (code - 0xAC00) % 28 !== 0 ? '아' : '야'
+  })() : ''
+  const salutation = nickname ? `${nickname}${suffix},` : ''
+
   const portrait = (
     <>
       <div className={styles.portraitMedia}>
@@ -152,6 +171,14 @@ export default async function MemorialPage({ params }: Props) {
 
   const content = (
     <div className={`${styles.memorialWrapper} ${isLightTheme ? styles.lightWrapper : ''}`}>
+      {overlayMessage && (
+        <MessageOverlay
+          memorialId={id}
+          salutation={salutation}
+          message={overlayMessage}
+          isLightTheme={isLightTheme}
+        />
+      )}
       <MemorialHeader isOwner={isOwner} isLoggedIn={!!user} />
       <MemorialSwiper portrait={portrait} messages={messages} />
     </div>
