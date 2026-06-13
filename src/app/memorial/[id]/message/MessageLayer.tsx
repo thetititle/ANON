@@ -18,16 +18,25 @@ export default function MessageLayer({ memorialId, salutation, message }: Props)
   const router = useRouter()
   const [replay, setReplay] = useState(true)
   const [leaving, setLeaving] = useState(false)
+  const [irisOrigin, setIrisOrigin] = useState({ x: 50, y: 50 })
 
-  function handleEnter() {
+  function handleEnter(e: React.MouseEvent<HTMLDivElement>) {
     if (leaving) return
     localStorage.setItem(`${REPLAY_KEY_PREFIX}${memorialId}`, String(replay))
+    setIrisOrigin({
+      x: (e.clientX / window.innerWidth) * 100,
+      y: (e.clientY / window.innerHeight) * 100,
+    })
     setLeaving(true)
     setTimeout(() => router.push(`/memorial/${memorialId}`), TRANSITION_MS)
   }
 
   return (
-    <div className={`${styles.layer} ${leaving ? styles.leaving : ''}`} onClick={handleEnter}>
+    <div
+      className={`${styles.layer} ${leaving ? styles.leaving : ''}`}
+      style={{ '--iris-x': `${irisOrigin.x}%`, '--iris-y': `${irisOrigin.y}%` } as React.CSSProperties}
+      onClick={handleEnter}
+    >
       <div className={styles.content}>
         {salutation && <p className={styles.salutation}>{salutation}</p>}
         <p className={styles.message}>{message}</p>

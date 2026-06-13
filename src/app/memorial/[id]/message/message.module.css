@@ -8,12 +8,17 @@
   padding: 2rem 1.5rem;
   text-align: center;
   cursor: pointer;
-  opacity: 1;
-  transition: opacity 0.35s ease;
+  clip-path: circle(150% at var(--iris-x, 50%) var(--iris-y, 50%));
 }
 
 .leaving {
-  opacity: 0;
+  animation: iris-out 0.35s ease-in forwards;
+}
+
+@keyframes iris-out {
+  to {
+    clip-path: circle(0% at var(--iris-x, 50%) var(--iris-y, 50%));
+  }
 }
 
 .content {
