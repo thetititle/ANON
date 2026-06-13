@@ -118,13 +118,15 @@ export default function MemorialList({ initialList }: { initialList: Memorial[] 
                 <Link href={`/memorial/${m.id}`} className={styles.cardLink} aria-label={m.deceased_name} />
                 <div className={styles.cardInfo}>
                   <span className={styles.cardName}>{m.deceased_name}</span>
-                  <span className={styles.cardMeta}>{m.relationship} · {m.passed_at.replace(/-/g, '.')}</span>
-                  {(() => {
-                    const day49 = getDay49Status(m.passed_at)
-                    return day49.state === 'before'
-                      ? <span className={styles.cardDday}>49재까지 D-{day49.daysLeft}</span>
-                      : null
-                  })()}
+                  <span className={styles.cardMeta}>
+                    {m.relationship} · {m.passed_at.replace(/-/g, '.')}
+                    {(() => {
+                      const day49 = getDay49Status(m.passed_at)
+                      return day49.state === 'before'
+                        ? <> · <span className={styles.cardDday}>49재까지 D-{day49.daysLeft}</span></>
+                        : null
+                    })()}
+                  </span>
                 </div>
                 {menuId === m.id ? (
                   <div className={styles.inlineActions}>
