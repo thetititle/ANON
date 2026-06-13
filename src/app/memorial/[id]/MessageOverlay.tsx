@@ -13,9 +13,10 @@ type Props = {
   salutation: string
   message: string
   isLightTheme: boolean
+  ageGroup: 'child' | 'teen' | 'youth' | 'adult'
 }
 
-export default function MessageOverlay({ memorialId, salutation, message, isLightTheme }: Props) {
+export default function MessageOverlay({ memorialId, salutation, message, isLightTheme, ageGroup }: Props) {
   const [removed, setRemoved] = useState(false)
   const [dissolving, setDissolving] = useState(false)
   const [replay, setReplay] = useState(true)
@@ -49,7 +50,7 @@ export default function MessageOverlay({ memorialId, salutation, message, isLigh
 
   return (
     <div
-      className={`${styles.overlay} ${isLightTheme ? styles.overlayLight : ''} ${dissolving ? styles.dissolving : ''}`}
+      className={`${styles.overlay} ${isLightTheme ? styles.overlayLight : ''} ${dissolving ? styles.dissolving : ''} ${ageGroup === 'child' ? styles.childFont : ''} ${ageGroup === 'teen' ? styles.teenFont : ''} ${ageGroup === 'youth' ? styles.youthFont : ''}`}
       onClick={handleEnter}
     >
       <div className={styles.content}>

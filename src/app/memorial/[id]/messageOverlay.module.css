@@ -43,6 +43,21 @@
   white-space: pre-line;
 }
 
+.childFont .salutation,
+.childFont .message {
+  font-family: 'YunChorokwoosanEoriniMinguk', 'Pretendard', sans-serif;
+}
+
+.teenFont .salutation,
+.teenFont .message {
+  font-family: 'KyoboHandwriting2019', 'Pretendard', sans-serif;
+}
+
+.youthFont .salutation,
+.youthFont .message {
+  font-family: 'OngleipKonkon', 'Pretendard', sans-serif;
+}
+
 .tapHint {
   position: relative;
   margin-top: 2.5rem;

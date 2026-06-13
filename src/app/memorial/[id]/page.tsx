@@ -112,28 +112,58 @@ export default async function MemorialPage({ params }: Props) {
     return dateStr.replace(/-/g, '.')
   }
 
+  function getAgeAtDeath(birthAt: string, passedAt: string) {
+    const birth = new Date(birthAt)
+    const passed = new Date(passedAt)
+    let age = passed.getFullYear() - birth.getFullYear()
+    const monthDiff = passed.getMonth() - birth.getMonth()
+    if (monthDiff < 0 || (monthDiff === 0 && passed.getDate() < birth.getDate())) age--
+    return age
+  }
+
   const birthFormatted = memorial.birth_at ? formatDate(memorial.birth_at) : null
   const deathFormatted = formatDate(memorial.passed_at)
+
+  const ageGroup: 'child' | 'teen' | 'youth' | 'adult' = (() => {
+    if (!memorial.birth_at) return 'adult'
+    const age = getAgeAtDeath(memorial.birth_at, memorial.passed_at)
+    if (age < 10) return 'child'
+    if (age <= 13) return 'teen'
+    if (age <= 18) return 'youth'
+    return 'adult'
+  })()
 
   const day49 = getDay49Status(memorial.passed_at)
   const isLightTheme = day49.state === 'today'
 
-  // DB 저장 메시지 우선, 없으면 static fallback
-  const overlayMessage = isLightTheme
-    ? (memorial.message_49 ?? (memorial.personality_tags?.length > 0
-        ? generateMemorialMessage(memorial.deceased_name, memorial.personality_tags, id, true)
-        : ''))
-    : (memorial.message ?? (memorial.personality_tags?.length > 0
-        ? generateMemorialMessage(memorial.deceased_name, memorial.personality_tags, id, false)
-        : ''))
+  // 가족 호칭(엄마/누나 등)으로 불렸다면, 고인이 연장자인 사용자를 향해 존댓말로 말함
+  const KINSHIP_TERMS = new Set([
+    '엄마', '아빠', '어머니', '아버지',
+    '누나', '언니', '오빠', '형',
+    '할머니', '할아버지', '이모', '고모', '삼촌', '외삼촌',
+  ])
 
   const nickname = memorial.nickname_for_user ?? ''
-  const suffix = nickname ? (() => {
+  const isElder = KINSHIP_TERMS.has(nickname)
+  // 10세 미만 고인이 연장자에게 보내는 메시지는 존댓말 대신 아이다운 말투 사용
+  const isChildElder = isElder && ageGroup === 'child'
+
+  // 가족 호칭은 뒤에 '아/야'를 붙이지 않음 (예: "엄마야," "누나야," 는 어색함)
+  const suffix = nickname && !isElder ? (() => {
     const code = nickname.charCodeAt(nickname.length - 1)
     if (code < 0xAC00 || code > 0xD7A3) return '야'
     return (code - 0xAC00) % 28 !== 0 ? '아' : '야'
   })() : ''
   const salutation = nickname ? `${nickname}${suffix},` : ''
+
+  // DB 저장 메시지 우선, 없으면 static fallback
+  const overlayMessage = isLightTheme
+    ? (memorial.message_49 ?? (memorial.personality_tags?.length > 0
+        ? generateMemorialMessage(memorial.deceased_name, memorial.personality_tags, id, true, isElder, isChildElder)
+        : ''))
+    : (memorial.message ?? (memorial.personality_tags?.length > 0
+        ? generateMemorialMessage(memorial.deceased_name, memorial.personality_tags, id, false, isElder, isChildElder)
+        : ''))
 
   const portrait = (
     <>
@@ -177,6 +207,7 @@ export default async function MemorialPage({ params }: Props) {
           salutation={salutation}
           message={overlayMessage}
           isLightTheme={isLightTheme}
+          ageGroup={ageGroup}
         />
       )}
       <MemorialHeader isOwner={isOwner} isLoggedIn={!!user} />

@@ -123,6 +123,11 @@
   transition: transform 0.3s ease;
 }
 
+.list li:last-child .memorialCard,
+.list li:last-child .deleteConfirm {
+  border-bottom: none;
+}
+
 .memorialCard:hover {
   transform: translateY(-1px);
 }
