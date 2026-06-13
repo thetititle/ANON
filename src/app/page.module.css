@@ -47,8 +47,8 @@
 }
 
 .landingPage {
-  /* 2.6s 후 0.5s 동안 fade-out, 3.1s에 리다이렉트 */
-  animation: fadeOut 0.5s ease 2.6s forwards;
+  /* 3.2s 후 0.5s 동안 fade-out, 3.7s에 리다이렉트 */
+  animation: fadeOut 0.5s ease 3.2s forwards;
 }
 
 .landingCenter {
@@ -80,6 +80,10 @@
 
 .landingDesc {
   animation: fadeIn 1.2s ease 0.9s both;
+}
+
+.landingFeature {
+  animation: fadeIn 1.2s ease 1.7s both;
 }
 
 .content {

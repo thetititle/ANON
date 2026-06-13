@@ -92,3 +92,9 @@
   color: #E53E3E;
   text-align: center;
 }
+
+.notice {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+  text-align: center;
+}

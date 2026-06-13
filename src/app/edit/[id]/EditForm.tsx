@@ -105,9 +105,13 @@ export default function EditForm({ memorial, media: initialMedia }: Props) {
         const item = initialMedia.find(m => m.id === id)
         if (item) {
           const path = item.url.split('/memorial-media/')[1]?.split('?')[0]
-          if (path) await supabase.storage.from('memorial-media').remove([path])
+          if (path) {
+            const { error: removeErr } = await supabase.storage.from('memorial-media').remove([path])
+            if (removeErr) throw removeErr
+          }
         }
-        await supabase.from('memorial_media').delete().eq('id', id)
+        const { error: deleteErr } = await supabase.from('memorial_media').delete().eq('id', id)
+        if (deleteErr) throw deleteErr
       }
 
       // 새 파일 업로드
@@ -119,12 +123,13 @@ export default function EditForm({ memorial, media: initialMedia }: Props) {
           const { error: upErr } = await supabase.storage.from('memorial-media').upload(path, file)
           if (upErr) throw upErr
           const { data: { publicUrl } } = supabase.storage.from('memorial-media').getPublicUrl(path)
-          await supabase.from('memorial_media').insert({
+          const { error: insertErr } = await supabase.from('memorial_media').insert({
             memorial_id: memorial.id,
             url: publicUrl,
             type: file.type.startsWith('video') ? 'video' : 'image',
             order: startOrder + i,
           })
+          if (insertErr) throw insertErr
         })
       )
 

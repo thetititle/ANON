@@ -1058,6 +1058,13 @@
   }
 }
 
+.day49Countdown {
+  margin-top: 0.25rem;
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+  letter-spacing: 0.05em;
+}
+
 .day49Label {
   margin-top: 0.25rem;
   font: var(--text-sm) 'Pretendard', sans-serif;

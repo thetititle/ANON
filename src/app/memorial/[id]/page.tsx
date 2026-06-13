@@ -87,7 +87,7 @@ export default async function MemorialPage({ params }: Props) {
   const deathFormatted = formatDate(memorial.passed_at)
 
   const day49 = getDay49Status(memorial.passed_at)
-  const isLightTheme = day49.state === 'light'
+  const isLightTheme = day49.state === 'today'
 
   // DB 저장 메시지 우선, 없으면 static fallback
   const message = isLightTheme
@@ -123,6 +123,9 @@ export default async function MemorialPage({ params }: Props) {
         <p className={styles.dates}>
           {birthFormatted ? `${birthFormatted} — ${deathFormatted}` : deathFormatted}
         </p>
+        {day49.state === 'before' && (
+          <p className={styles.day49Countdown}>49재까지 D-{day49.daysLeft}</p>
+        )}
         {isLightTheme && (
           <p className={styles.day49Label}>오늘은 49일이에요</p>
         )}
