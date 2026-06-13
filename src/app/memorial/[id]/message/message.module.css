@@ -8,6 +8,12 @@
   padding: 2rem 1.5rem;
   text-align: center;
   cursor: pointer;
+  opacity: 1;
+  transition: opacity 0.35s ease;
+}
+
+.leaving {
+  opacity: 0;
 }
 
 .content {

@@ -6,6 +6,7 @@ import { FaHandPointer } from 'react-icons/fa'
 import styles from './message.module.css'
 
 const REPLAY_KEY_PREFIX = 'anon_message_replay_'
+const TRANSITION_MS = 350
 
 type Props = {
   memorialId: string
@@ -16,14 +17,17 @@ type Props = {
 export default function MessageLayer({ memorialId, salutation, message }: Props) {
   const router = useRouter()
   const [replay, setReplay] = useState(true)
+  const [leaving, setLeaving] = useState(false)
 
   function handleEnter() {
+    if (leaving) return
     localStorage.setItem(`${REPLAY_KEY_PREFIX}${memorialId}`, String(replay))
-    router.push(`/memorial/${memorialId}`)
+    setLeaving(true)
+    setTimeout(() => router.push(`/memorial/${memorialId}`), TRANSITION_MS)
   }
 
   return (
-    <div className={styles.layer} onClick={handleEnter}>
+    <div className={`${styles.layer} ${leaving ? styles.leaving : ''}`} onClick={handleEnter}>
       <div className={styles.content}>
         {salutation && <p className={styles.salutation}>{salutation}</p>}
         <p className={styles.message}>{message}</p>
