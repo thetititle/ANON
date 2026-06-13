@@ -1,40 +1,28 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { notFound, redirect } from 'next/navigation'
+import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import styles from './deathRegistration.module.css'
-
-type Props = { params: Promise<{ id: string }> }
 
 export const metadata: Metadata = {
   title: '사망신고 안내 | 안온',
 }
 
-export default async function DeathRegistrationPage({ params }: Props) {
-  const { id } = await params
+export default async function DeathRegistrationPage() {
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const { data: memorial, error } = await supabase
-    .from('memorials')
-    .select('id, deceased_name, user_id')
-    .eq('id', id)
-    .single()
-
-  if (error || !memorial) notFound()
-  if (memorial.user_id !== user.id) notFound()
-
   return (
     <main className={styles.page}>
       <div className={styles.header}>
-        <Link href={`/memorial/${id}`} className={styles.backBtn} aria-label="뒤로가기">←</Link>
+        <Link href="/" className={styles.backBtn} aria-label="뒤로가기">←</Link>
         <h1 className={styles.title}>사망신고 안내</h1>
       </div>
 
       <p className={styles.intro}>
-        {memorial.deceased_name}님의 사망신고를 준비하실 때 참고하실 내용을 정리했어요.
+        사망신고를 준비하실 때 참고하실 내용을 정리했어요.
         지역별로 세부 절차가 다를 수 있으니, 방문 전 가까운 주민센터에 한 번 더 확인해보시는 걸 권장해요.
       </p>
 

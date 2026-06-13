@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { getDay49Status } from '@/lib/day49'
+import SiteFab from '@/components/SiteFab'
 import styles from '@/app/page.module.css'
 
 type Memorial = { id: string; deceased_name: string; passed_at: string; relationship: string }
@@ -39,14 +40,6 @@ function CloseIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <path d="M18 6L6 18M6 6l12 12" />
-    </svg>
-  )
-}
-
-function LogoutIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" />
     </svg>
   )
 }
@@ -172,11 +165,7 @@ export default function MemorialList({ initialList }: { initialList: Memorial[] 
         ))}
       </ul>
       <Link href="/create" className={styles.newMemorialBtn}>새 추모 공간 만들기</Link>
-      <div className={styles.fixedActions}>
-        <Link href="/logout" className={styles.fixedActionBtn} aria-label="로그아웃">
-          <LogoutIcon />
-        </Link>
-      </div>
+      <SiteFab isLoggedIn />
     </div>
   )
 }

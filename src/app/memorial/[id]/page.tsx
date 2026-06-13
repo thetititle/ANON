@@ -217,7 +217,7 @@ export default async function MemorialPage({ params }: Props) {
           ageGroup={ageGroup}
         />
       )}
-      <MemorialHeader memorialId={id} isOwner={isOwner} isLoggedIn={!!user} />
+      <MemorialHeader isOwner={isOwner} isLoggedIn={!!user} />
       <MemorialSwiper portrait={portrait} messages={messages} />
     </div>
   )

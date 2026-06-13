@@ -199,56 +199,6 @@
   flex-shrink: 0;
 }
 
-/* 우측 하단 고정 아이콘 스택 (로그아웃) - 추모 페이지 헤더와 동일한 스타일 */
-.fixedActions {
-  position: fixed;
-  right: 1.25rem;
-  bottom: 1.5rem;
-  z-index: 50;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.fixedActionBtn {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 50%;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  color: var(--foreground);
-  opacity: 0.4;
-  cursor: pointer;
-  transition: transform 0.3s ease, background 0.3s ease, opacity 0.3s ease;
-}
-
-.fixedActionBtn::before {
-  content: '';
-  position: absolute;
-  inset: -0.625rem;
-  border-radius: 50%;
-  background: var(--foreground);
-  opacity: 0.08;
-  filter: blur(0.625rem);
-  z-index: -1;
-}
-
-.fixedActionBtn:hover {
-  background: var(--border);
-  opacity: 1;
-  transform: translateY(-1px);
-}
-
-.fixedActionBtn svg {
-  width: 1.125rem;
-  height: 1.125rem;
-}
-
 /* 삭제 확인 */
 .deleteConfirm {
   padding: 1.25rem 0;
