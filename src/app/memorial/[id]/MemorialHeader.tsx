@@ -48,7 +48,16 @@ function InfoIcon() {
   )
 }
 
-export default function MemorialHeader({ isOwner, isLoggedIn }: { isOwner: boolean; isLoggedIn: boolean }) {
+function DocIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+      <path d="M14 2v6h6M9 13h6M9 17h6" />
+    </svg>
+  )
+}
+
+export default function MemorialHeader({ memorialId, isOwner, isLoggedIn }: { memorialId: string; isOwner: boolean; isLoggedIn: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [showInfo, setShowInfo] = useState(false)
@@ -101,6 +110,14 @@ export default function MemorialHeader({ isOwner, isLoggedIn }: { isOwner: boole
               <span className={styles.headerLabel}>목록</span>
               <Link href="/" className={styles.headerIconBtn} aria-label="목록으로" onClick={() => setMenuOpen(false)}>
                 <BackIcon />
+              </Link>
+            </div>
+          )}
+          {isOwner && (
+            <div className={styles.headerItem}>
+              <span className={styles.headerLabel}>사망신고 안내</span>
+              <Link href={`/memorial/${memorialId}/death-registration`} className={styles.headerIconBtn} aria-label="사망신고 안내" onClick={() => setMenuOpen(false)}>
+                <DocIcon />
               </Link>
             </div>
           )}

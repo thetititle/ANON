@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { FaChevronDown } from 'react-icons/fa'
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import { isMobileDevice } from '@/lib/isMobileDevice'
@@ -136,15 +137,19 @@ export default async function MemorialPage({ params }: Props) {
   const day49 = getDay49Status(memorial.passed_at)
   const isLightTheme = day49.state === 'today'
 
-  // 가족 호칭(엄마/누나 등)으로 불렸다면, 고인이 연장자인 사용자를 향해 존댓말로 말함
-  const KINSHIP_TERMS = new Set([
-    '엄마', '아빠', '어머니', '아버지',
-    '누나', '언니', '오빠', '형',
-    '할머니', '할아버지', '이모', '고모', '삼촌', '외삼촌',
-  ])
+  // 가족 호칭(엄마/누나/큰누/마마 등 변형 포함)으로 불렸다면, 고인이 연장자인 사용자를 향해 존댓말로 말함
+  // 호칭은 접두어(큰/작은/짠/친/외 등) + 핵심 호칭 형태로 무한히 변형되므로 끝부분(어미) 기준으로 판별
+  const KINSHIP_ENDINGS = [
+    '엄마', '어머니', '어무이', '어무니', '엄니', '옴마', '마마', '맘마', '마미',
+    '아빠', '아버지', '아부지', '아빵', '빠빠', '빱빠', '팝빠', '팝파', '파파',
+    '누나', '누', '언니', '오빠', '형',
+    '할머니', '할매', '할무니', '할미',
+    '할아버지', '할배', '할부지',
+    '이모', '고모', '삼촌', '외삼촌',
+  ]
 
   const nickname = memorial.nickname_for_user ?? ''
-  const isElder = KINSHIP_TERMS.has(nickname)
+  const isElder = KINSHIP_ENDINGS.some((term) => nickname.endsWith(term))
   // 10세 미만 고인이 연장자에게 보내는 메시지는 존댓말 대신 아이다운 말투 사용
   const isChildElder = isElder && ageGroup === 'child'
 
@@ -181,6 +186,8 @@ export default async function MemorialPage({ params }: Props) {
             <p className={styles.day49Label}>오늘은 49일이에요</p>
           )}
         </section>
+
+        <FaChevronDown className={styles.scrollHint} aria-hidden="true" />
       </div>
     </>
   )
@@ -210,7 +217,7 @@ export default async function MemorialPage({ params }: Props) {
           ageGroup={ageGroup}
         />
       )}
-      <MemorialHeader isOwner={isOwner} isLoggedIn={!!user} />
+      <MemorialHeader memorialId={id} isOwner={isOwner} isLoggedIn={!!user} />
       <MemorialSwiper portrait={portrait} messages={messages} />
     </div>
   )

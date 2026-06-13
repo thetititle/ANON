@@ -21,7 +21,7 @@ export default function MediaSlider({ media }: { media: Media[] }) {
       fadeEffect={{ crossFade: true }}
       speed={2000}
       autoplay={{ delay: 6000, disableOnInteraction: false }}
-      loop={media.length > 1}
+      rewind={media.length > 1}
       spaceBetween={0}
       slidesPerView={1}
       nested
