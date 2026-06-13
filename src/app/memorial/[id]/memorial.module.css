@@ -369,6 +369,75 @@
   flex-shrink: 0;
 }
 
+/* 부의금 방명록 */
+.donationGuestbook {
+  flex-shrink: 0;
+  margin-top: 0.75rem;
+  padding: 0 1.25rem;
+  text-align: center;
+}
+
+.donationGuestbookText {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+  line-height: 1.6;
+}
+
+.donationTotal {
+  margin-top: 0.25rem;
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--primary);
+}
+
+.donationRecordRow {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.donationAmountInput {
+  flex: 1;
+  min-width: 0;
+  padding: 0.875rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground);
+}
+
+.donationAmountInput::placeholder {
+  color: var(--foreground-muted);
+}
+
+.donationRecordBtn {
+  flex-shrink: 0;
+  padding: 0.875rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  font-weight: 600;
+  color: var(--foreground);
+  cursor: pointer;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.donationRecordBtn:hover:not(:disabled) {
+  background: var(--border);
+  transform: translateY(-1px);
+}
+
+.donationRecordBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.donationRecordedText {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+  text-align: center;
+}
+
 /* 조문 메시지 */
 .messagesPage {
   height: 100%;

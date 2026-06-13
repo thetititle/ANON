@@ -115,6 +115,14 @@ type Comment = {
   author_name: string | null
 }
 
+type Donation = {
+  id: string
+  user_id: string
+  amount: number | null
+  created_at: string
+  author_name: string
+}
+
 type Props = {
   memorialId: string
   initialComments: Comment[]
@@ -124,6 +132,9 @@ type Props = {
   bankName: string | null
   accountNumber: string | null
   accountHolder: string | null
+  initialDonations: Donation[]
+  isOwner: boolean
+  donationTotal: number
 }
 
 export default function CondolenceSection({
@@ -135,6 +146,9 @@ export default function CondolenceSection({
   bankName,
   accountNumber,
   accountHolder,
+  initialDonations,
+  isOwner,
+  donationTotal,
 }: Props) {
   const [comments, setComments] = useState<Comment[]>(initialComments)
   const [content, setContent] = useState('')
@@ -153,6 +167,12 @@ export default function CondolenceSection({
   const [actionError, setActionError] = useState<string | null>(null)
   const [visibleCount, setVisibleCount] = useState(10)
   const [menuId, setMenuId] = useState<string | null>(null)
+  const [donations, setDonations] = useState<Donation[]>(initialDonations)
+  const [donationAmount, setDonationAmount] = useState('')
+  const [isRecording, setIsRecording] = useState(false)
+  const [hasDonated, setHasDonated] = useState(
+    () => !!currentUserId && initialDonations.some(d => d.user_id === currentUserId)
+  )
   const scrollRef = useRef<HTMLDivElement>(null)
 
   // 메시지 목록을 스크롤할 땐 Swiper의 페이지 전환(슬라이드/마우스휠)으로 전파되지 않도록 막고,
@@ -289,6 +309,26 @@ export default function CondolenceSection({
     setTimeout(() => setCopied(false), 2000)
   }
 
+  async function recordDonation() {
+    if (!currentUserId) return
+    setIsRecording(true)
+
+    const supabase = createClient()
+    const trimmed = donationAmount.trim()
+    const amount = trimmed ? Number(trimmed) : null
+    const { data, error: insertError } = await supabase
+      .from('memorial_donations')
+      .insert({ memorial_id: memorialId, user_id: currentUserId, amount })
+      .select()
+      .single()
+
+    if (!insertError) {
+      setDonations(prev => [{ ...data, author_name: currentUserName ?? '익명' }, ...prev])
+      setHasDonated(true)
+    }
+    setIsRecording(false)
+  }
+
   function openToss() {
     window.location.href = `supertoss://send?bank=${encodeURIComponent(bankName ?? '')}&accountNo=${encodeURIComponent(accountNumber ?? '')}`
   }
@@ -386,6 +426,17 @@ export default function CondolenceSection({
           <RibbonIcon />
         </div>
       </div>
+
+      {showPayment && donations.length > 0 && (
+        <div className={styles.donationGuestbook}>
+          <p className={styles.donationGuestbookText}>
+            {donations.map(d => d.author_name).join(', ')}님이 마음을 전했어요
+          </p>
+          {isOwner && donationTotal > 0 && (
+            <p className={styles.donationTotal}>총 {donationTotal.toLocaleString()}원 · {donations.length}명</p>
+          )}
+        </div>
+      )}
 
       <div className={styles.condolenceScroll} ref={scrollRef}>
       {comments.length > 0 && (
@@ -611,6 +662,29 @@ export default function CondolenceSection({
                         })()}
                         {bankName} · {accountNumber} · {accountHolder}
                       </p>
+
+                      {hasDonated ? (
+                        <p className={styles.donationRecordedText}>마음을 전해주셔서 감사해요</p>
+                      ) : (
+                        <div className={styles.donationRecordRow}>
+                          <input
+                            type="number"
+                            inputMode="numeric"
+                            className={styles.donationAmountInput}
+                            placeholder="금액 (선택, 본인만 확인)"
+                            value={donationAmount}
+                            onChange={e => setDonationAmount(e.target.value)}
+                          />
+                          <button
+                            type="button"
+                            className={styles.donationRecordBtn}
+                            onClick={recordDonation}
+                            disabled={isRecording}
+                          >
+                            {isRecording ? '기록 중...' : '전했어요'}
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

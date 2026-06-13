@@ -79,6 +79,26 @@ export default async function MemorialPage({ params }: Props) {
     ? (await supabase.from('users').select('real_name').eq('id', user.id).single()).data?.real_name ?? null
     : null
 
+  const { data: donationsRaw } = await supabase
+    .from('memorial_donations')
+    .select('id, user_id, amount, created_at, users(real_name)')
+    .eq('memorial_id', id)
+    .order('created_at', { ascending: false })
+
+  const donations = (donationsRaw ?? []).map((d) => {
+    const usersData = d.users as { real_name: string } | { real_name: string }[] | null
+    const realName = Array.isArray(usersData) ? usersData[0]?.real_name : usersData?.real_name
+    return {
+      id: d.id as string,
+      user_id: d.user_id as string,
+      amount: d.amount as number | null,
+      created_at: d.created_at as string,
+      author_name: realName ?? '익명',
+    }
+  })
+
+  const donationTotal = donations.reduce((sum, d) => sum + (d.amount ?? 0), 0)
+
   function formatDate(dateStr: string) {
     return dateStr.replace(/-/g, '.')
   }
@@ -147,6 +167,9 @@ export default async function MemorialPage({ params }: Props) {
       bankName={memorial.bank_name ?? null}
       accountNumber={memorial.account_number ?? null}
       accountHolder={memorial.account_holder ?? null}
+      initialDonations={donations}
+      isOwner={isOwner}
+      donationTotal={donationTotal}
     />
   )
 
