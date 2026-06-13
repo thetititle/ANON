@@ -12,8 +12,8 @@
 - **Backend/DB**: Supabase (PostgreSQL + Auth + Storage)
 - **상태 관리**: Zustand (예정)
 - **날짜 계산**: date-fns (예정)
-- **미디어 슬라이더**: Swiper.js (예정)
-- **QR 코드**: qrcode.react (예정)
+- **미디어 슬라이더**: Swiper.js
+- **QR 코드**: qrcode.react
 
 ## 개발 명령어
 ```bash
