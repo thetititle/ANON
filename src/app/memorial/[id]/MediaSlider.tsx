@@ -44,7 +44,6 @@ export default function MediaSlider({ media }: { media: Media[] }) {
                 className={styles.mediaItem}
               />
             )}
-            <div className={styles.mediaTint} aria-hidden="true" />
           </div>
         </SwiperSlide>
       ))}

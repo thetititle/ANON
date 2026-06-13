@@ -131,20 +131,22 @@ export default async function MemorialPage({ params }: Props) {
 
   const portrait = (
     <>
-      {media && media.length > 0 && (
-        <MediaSlider media={media} />
-      )}
-
-      <section className={styles.hero}>
-        <p className={styles.relationship}>{relationshipLabel}</p>
-        <h1 className={styles.name}>{memorial.deceased_name}</h1>
-        <p className={styles.dates}>
-          {birthFormatted ? `${birthFormatted} — ${deathFormatted}` : deathFormatted}
-        </p>
-        {isLightTheme && (
-          <p className={styles.day49Label}>오늘은 49일이에요</p>
+      <div className={styles.portraitMedia}>
+        {media && media.length > 0 && (
+          <MediaSlider media={media} />
         )}
-      </section>
+
+        <section className={styles.hero}>
+          <p className={styles.relationship}>{relationshipLabel}</p>
+          <h1 className={styles.name}>{memorial.deceased_name}</h1>
+          <p className={styles.dates}>
+            {birthFormatted ? `${birthFormatted} — ${deathFormatted}` : deathFormatted}
+          </p>
+          {isLightTheme && (
+            <p className={styles.day49Label}>오늘은 49일이에요</p>
+          )}
+        </section>
+      </div>
 
       {message && (
         <div className={`${styles.messageCard} ${isLightTheme ? styles.messageCardLight : ''}`}>

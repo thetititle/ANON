@@ -7,9 +7,11 @@ type MediaItem = {
   file: File
   url: string
   kind: 'image' | 'video'
+  lowRes?: boolean
 }
 
 const MAX_IMAGES = 20
+const MIN_IMAGE_WIDTH = 1080
 
 type Props = {
   onComplete?: (files: File[]) => void
@@ -39,6 +41,17 @@ export default function MediaUpload({ onComplete }: Props) {
     setItems(prev => [...prev, ...next])
     e.target.value = ''
 
+    for (const item of next) {
+      if (item.kind !== 'image') continue
+      const img = new Image()
+      img.onload = () => {
+        if (img.naturalWidth < MIN_IMAGE_WIDTH) {
+          setItems(prev => prev.map(i => i.url === item.url ? { ...i, lowRes: true } : i))
+        }
+      }
+      img.src = item.url
+    }
+
     if (next.length > 0 && !completedRef.current) {
       completedRef.current = true
       onComplete?.(updated.map(i => i.file))
@@ -53,6 +66,7 @@ export default function MediaUpload({ onComplete }: Props) {
   }
 
   const imageCount = items.filter(i => i.kind === 'image').length
+  const hasLowRes = items.some(i => i.lowRes)
 
   return (
     <div className={styles.wrapper}>
@@ -73,21 +87,28 @@ export default function MediaUpload({ onComplete }: Props) {
             </button>
           </div>
           <p className={styles.hint}>사진이 없으면 추모 페이지에 표시되지 않아요</p>
+          <p className={styles.hint}>세로로 찍은 사진이 추모 페이지 화면에 가장 잘 어울려요</p>
         </div>
       ) : (
-        <div className={styles.grid}>
-          {items.map((item, i) => (
-            <div key={item.url} className={styles.thumb}>
-              {item.kind === 'image' ? (
-                <img src={item.url} alt="" className={styles.media} />
-              ) : (
-                <video src={item.url} className={styles.media} />
-              )}
-              <button className={styles.remove} onClick={() => remove(i)}>×</button>
-            </div>
-          ))}
-          {imageCount < MAX_IMAGES && (
-            <button className={styles.add} onClick={() => inputRef.current?.click()}>+</button>
+        <div className={styles.filled}>
+          <div className={styles.grid}>
+            {items.map((item, i) => (
+              <div key={item.url} className={styles.thumb}>
+                {item.kind === 'image' ? (
+                  <img src={item.url} alt="" className={styles.media} />
+                ) : (
+                  <video src={item.url} className={styles.media} />
+                )}
+                <button className={styles.remove} onClick={() => remove(i)}>×</button>
+              </div>
+            ))}
+            {imageCount < MAX_IMAGES && (
+              <button className={styles.add} onClick={() => inputRef.current?.click()}>+</button>
+            )}
+          </div>
+          <p className={styles.hint}>세로로 찍은 사진이 추모 페이지 화면에 가장 잘 어울려요</p>
+          {hasLowRes && (
+            <p className={styles.warning}>화질이 낮은 사진이 있어요. 추모 페이지에서 흐릿하게 보일 수 있어요</p>
           )}
         </div>
       )}
