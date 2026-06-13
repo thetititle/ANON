@@ -124,11 +124,6 @@ export default async function MemorialPage({ params }: Props) {
   })() : ''
   const salutation = nickname ? `${nickname}${suffix},` : ''
 
-  const rel = memorial.relationship ?? ''
-  const relCode = rel.charCodeAt(rel.length - 1)
-  const relSuffix = (relCode - 0xAC00) % 28 !== 0 ? '이' : '가'
-  const relationshipLabel = `${rel}${relSuffix} 기억하는`
-
   const portrait = (
     <>
       <div className={styles.portraitMedia}>
@@ -136,8 +131,14 @@ export default async function MemorialPage({ params }: Props) {
           <MediaSlider media={media} />
         )}
 
+        {message && (
+          <div className={styles.messageOverlay}>
+            {salutation && <p className={styles.salutationHandwriting}>{salutation}</p>}
+            <p className={styles.messageHandwriting}>{message}</p>
+          </div>
+        )}
+
         <section className={styles.hero}>
-          <p className={styles.relationship}>{relationshipLabel}</p>
           <h1 className={styles.name}>{memorial.deceased_name}</h1>
           <p className={styles.dates}>
             {birthFormatted ? `${birthFormatted} — ${deathFormatted}` : deathFormatted}
@@ -147,13 +148,6 @@ export default async function MemorialPage({ params }: Props) {
           )}
         </section>
       </div>
-
-      {message && (
-        <div className={`${styles.messageCard} ${isLightTheme ? styles.messageCardLight : ''}`}>
-          {salutation && <p className={styles.salutation}>{salutation}</p>}
-          <p className={styles.messageText}>{message}</p>
-        </div>
-      )}
     </>
   )
 
