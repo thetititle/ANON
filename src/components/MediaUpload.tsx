@@ -15,9 +15,10 @@ const MIN_IMAGE_WIDTH = 1080
 
 type Props = {
   onComplete?: (files: File[]) => void
+  onChange?: (files: File[]) => void
 }
 
-export default function MediaUpload({ onComplete }: Props) {
+export default function MediaUpload({ onComplete, onChange }: Props) {
   const [items, setItems] = useState<MediaItem[]>([])
   const inputRef = useRef<HTMLInputElement>(null)
   const completedRef = useRef(false)
@@ -52,16 +53,22 @@ export default function MediaUpload({ onComplete }: Props) {
       img.src = item.url
     }
 
-    if (next.length > 0 && !completedRef.current) {
-      completedRef.current = true
-      onComplete?.(updated.map(i => i.file))
+    if (next.length > 0) {
+      if (!completedRef.current) {
+        completedRef.current = true
+        onComplete?.(updated.map(i => i.file))
+      } else {
+        onChange?.(updated.map(i => i.file))
+      }
     }
   }
 
   function remove(index: number) {
     setItems(prev => {
       URL.revokeObjectURL(prev[index].url)
-      return prev.filter((_, i) => i !== index)
+      const next = prev.filter((_, i) => i !== index)
+      onChange?.(next.map(i => i.file))
+      return next
     })
   }
 
