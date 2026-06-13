@@ -427,16 +427,21 @@ export default function CondolenceSection({
         </div>
       </div>
 
-      {showPayment && donations.length > 0 && (
-        <div className={styles.donationGuestbook}>
-          <p className={styles.donationGuestbookText}>
-            {donations.map(d => d.author_name).join(', ')}님이 마음을 전했어요
-          </p>
-          {isOwner && donationTotal > 0 && (
-            <p className={styles.donationTotal}>총 {donationTotal.toLocaleString()}원 · {donations.length}명</p>
-          )}
-        </div>
-      )}
+      {showPayment && donations.length > 0 && (() => {
+        const names = donations.map(d => d.author_name)
+        const shown = names.slice(0, 3)
+        const rest = names.length - shown.length
+        return (
+          <div className={styles.donationGuestbook}>
+            <p className={styles.donationGuestbookText}>
+              {shown.join(', ')}{rest > 0 ? ` 외 ${rest}명이` : '님이'} 마음을 전했어요
+            </p>
+            {isOwner && donationTotal > 0 && (
+              <p className={styles.donationTotal}>총 {donationTotal.toLocaleString()}원 · {donations.length}명</p>
+            )}
+          </div>
+        )
+      })()}
 
       <div className={styles.condolenceScroll} ref={scrollRef}>
       {comments.length > 0 && (

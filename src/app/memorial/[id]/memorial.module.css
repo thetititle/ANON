@@ -381,6 +381,7 @@
   font: var(--text-sm) 'Pretendard', sans-serif;
   color: var(--foreground-muted);
   line-height: 1.6;
+  word-break: keep-all;
 }
 
 .donationTotal {
