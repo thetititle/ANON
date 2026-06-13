@@ -1,9 +1,7 @@
 import type { Metadata } from 'next'
-import { headers } from 'next/headers'
-import { userAgent } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
-import { generateMemorialMessage } from '@/lib/generateMessage'
+import { isMobileDevice } from '@/lib/isMobileDevice'
 import { getDay49Status } from '@/lib/day49'
 import TimeBackground from '@/components/TimeBackground'
 import styles from './memorial.module.css'
@@ -44,8 +42,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function MemorialPage({ params }: Props) {
   const { id } = await params
 
-  const { device } = userAgent({ headers: await headers() })
-  if (device.type !== 'mobile') {
+  if (!(await isMobileDevice())) {
     return <MobileOnlyNotice url={`${siteUrl}/memorial/${id}`} />
   }
 
@@ -119,23 +116,6 @@ export default async function MemorialPage({ params }: Props) {
   const day49 = getDay49Status(memorial.passed_at)
   const isLightTheme = day49.state === 'today'
 
-  // DB 저장 메시지 우선, 없으면 static fallback
-  const message = isLightTheme
-    ? (memorial.message_49 ?? (memorial.personality_tags?.length > 0
-        ? generateMemorialMessage(memorial.deceased_name, memorial.personality_tags, id, true)
-        : ''))
-    : (memorial.message ?? (memorial.personality_tags?.length > 0
-        ? generateMemorialMessage(memorial.deceased_name, memorial.personality_tags, id, false)
-        : ''))
-
-  const nickname = memorial.nickname_for_user ?? ''
-  const suffix = nickname ? (() => {
-    const code = nickname.charCodeAt(nickname.length - 1)
-    if (code < 0xAC00 || code > 0xD7A3) return '야'
-    return (code - 0xAC00) % 28 !== 0 ? '아' : '야'
-  })() : ''
-  const salutation = nickname ? `${nickname}${suffix},` : ''
-
   const portrait = (
     <>
       <div className={styles.portraitMedia}>
@@ -143,17 +123,10 @@ export default async function MemorialPage({ params }: Props) {
           <MediaSlider media={media} />
         )}
 
-        {message && (
-          <div className={styles.messageOverlay}>
-            {salutation && <p className={styles.salutationHandwriting}>{salutation}</p>}
-            <p className={styles.messageHandwriting}>{message}</p>
-          </div>
-        )}
-
         <section className={styles.hero}>
           <h1 className={styles.name}>{memorial.deceased_name}</h1>
           <p className={styles.dates}>
-            {birthFormatted ? `${birthFormatted} — ${deathFormatted}` : deathFormatted}
+            {birthFormatted ? `${birthFormatted} ~ ${deathFormatted}` : deathFormatted}
           </p>
           {isLightTheme && (
             <p className={styles.day49Label}>오늘은 49일이에요</p>

@@ -115,7 +115,17 @@ export default function MemorialList({ initialList }: { initialList: Memorial[] 
               </div>
             ) : (
               <div className={styles.memorialCard}>
-                <Link href={`/memorial/${m.id}`} className={styles.cardLink} aria-label={m.deceased_name} />
+                <Link
+                  href={`/memorial/${m.id}`}
+                  className={styles.cardLink}
+                  aria-label={m.deceased_name}
+                  onClick={(e) => {
+                    if (localStorage.getItem(`anon_message_replay_${m.id}`) !== 'false') {
+                      e.preventDefault()
+                      router.push(`/memorial/${m.id}/message`)
+                    }
+                  }}
+                />
                 <div className={styles.cardInfo}>
                   <span className={styles.cardName}>{m.deceased_name}</span>
                   <span className={styles.cardMeta}>
