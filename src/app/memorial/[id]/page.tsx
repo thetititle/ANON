@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import { generateMemorialMessage } from '@/lib/generateMessage'
@@ -10,6 +11,29 @@ import CondolenceSection from './CondolenceSection'
 import MemorialSwiper from './MemorialSwiper'
 
 type Props = { params: Promise<{ id: string }> }
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params
+  const supabase = await createClient()
+
+  const { data: memorial } = await supabase
+    .from('memorials')
+    .select('deceased_name')
+    .eq('id', id)
+    .single()
+
+  if (!memorial) return {}
+
+  const title = `${memorial.deceased_name}님을 추억하며`
+  const description = `안온에서 ${memorial.deceased_name}님을 위한 추모 공간을 만나보세요.`
+
+  return {
+    title,
+    description,
+    openGraph: { title, description },
+    twitter: { title, description },
+  }
+}
 
 export default async function MemorialPage({ params }: Props) {
   const { id } = await params
