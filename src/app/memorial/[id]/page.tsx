@@ -123,9 +123,6 @@ export default async function MemorialPage({ params }: Props) {
         <p className={styles.dates}>
           {birthFormatted ? `${birthFormatted} — ${deathFormatted}` : deathFormatted}
         </p>
-        {day49.state === 'before' && (
-          <p className={styles.day49Countdown}>49재까지 D-{day49.daysLeft}</p>
-        )}
         {isLightTheme && (
           <p className={styles.day49Label}>오늘은 49일이에요</p>
         )}

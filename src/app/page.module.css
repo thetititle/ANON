@@ -321,6 +321,11 @@
   color: var(--foreground-muted);
 }
 
+.cardDday {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--primary);
+}
+
 .empty {
   font: var(--text-body) 'Pretendard', sans-serif;
   color: var(--foreground-muted);
