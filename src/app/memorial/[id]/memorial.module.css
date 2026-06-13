@@ -384,10 +384,27 @@
   word-break: keep-all;
 }
 
-.donationTotal {
-  margin-top: 0.25rem;
-  font: var(--text-sm) 'Pretendard', sans-serif;
-  color: var(--primary);
+.donationTicker {
+  height: 1.4rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.donationTickerInner {
+  display: flex;
+  flex-direction: column;
+  animation-name: donationTickerScroll;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.donationTickerInner .donationGuestbookText {
+  height: 1.4rem;
+  white-space: nowrap;
+}
+
+@keyframes donationTickerScroll {
+  to { transform: translateY(-50%); }
 }
 
 .donationRecordRow {

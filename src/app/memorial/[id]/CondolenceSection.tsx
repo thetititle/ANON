@@ -133,8 +133,6 @@ type Props = {
   accountNumber: string | null
   accountHolder: string | null
   initialDonations: Donation[]
-  isOwner: boolean
-  donationTotal: number
 }
 
 export default function CondolenceSection({
@@ -147,8 +145,6 @@ export default function CondolenceSection({
   accountNumber,
   accountHolder,
   initialDonations,
-  isOwner,
-  donationTotal,
 }: Props) {
   const [comments, setComments] = useState<Comment[]>(initialComments)
   const [content, setContent] = useState('')
@@ -428,16 +424,22 @@ export default function CondolenceSection({
       </div>
 
       {showPayment && donations.length > 0 && (() => {
-        const names = donations.map(d => d.author_name)
-        const shown = names.slice(0, 3)
-        const rest = names.length - shown.length
+        const lines = donations.map(d => `${d.author_name}님이 마음을 전했어요`)
         return (
           <div className={styles.donationGuestbook}>
-            <p className={styles.donationGuestbookText}>
-              {shown.join(', ')}{rest > 0 ? ` 외 ${rest}명이` : '님이'} 마음을 전했어요
-            </p>
-            {isOwner && donationTotal > 0 && (
-              <p className={styles.donationTotal}>총 {donationTotal.toLocaleString()}원 · {donations.length}명</p>
+            {lines.length > 1 ? (
+              <div className={styles.donationTicker}>
+                <div
+                  className={styles.donationTickerInner}
+                  style={{ animationDuration: `${lines.length * 2.5}s` }}
+                >
+                  {[...lines, ...lines].map((line, i) => (
+                    <p key={i} className={styles.donationGuestbookText}>{line}</p>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <p className={styles.donationGuestbookText}>{lines[0]}</p>
             )}
           </div>
         )

@@ -97,8 +97,6 @@ export default async function MemorialPage({ params }: Props) {
     }
   })
 
-  const donationTotal = donations.reduce((sum, d) => sum + (d.amount ?? 0), 0)
-
   function formatDate(dateStr: string) {
     return dateStr.replace(/-/g, '.')
   }
@@ -168,8 +166,6 @@ export default async function MemorialPage({ params }: Props) {
       accountNumber={memorial.account_number ?? null}
       accountHolder={memorial.account_holder ?? null}
       initialDonations={donations}
-      isOwner={isOwner}
-      donationTotal={donationTotal}
     />
   )
 
