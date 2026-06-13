@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import { headers } from 'next/headers'
+import { userAgent } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import { generateMemorialMessage } from '@/lib/generateMessage'
@@ -9,6 +11,10 @@ import MediaSlider from './MediaSlider'
 import MemorialHeader from './MemorialHeader'
 import CondolenceSection from './CondolenceSection'
 import MemorialSwiper from './MemorialSwiper'
+import MobileOnlyNotice from './MobileOnlyNotice'
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+  ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
 
 type Props = { params: Promise<{ id: string }> }
 
@@ -37,6 +43,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function MemorialPage({ params }: Props) {
   const { id } = await params
+
+  const { device } = userAgent({ headers: await headers() })
+  if (device.type !== 'mobile') {
+    return <MobileOnlyNotice url={`${siteUrl}/memorial/${id}`} />
+  }
+
   const supabase = await createClient()
 
   const { data: memorial, error } = await supabase
