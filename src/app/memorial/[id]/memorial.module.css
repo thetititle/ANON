@@ -962,6 +962,40 @@
   line-height: 1;
 }
 
+/* ── 안내(온보딩) 모달 ── */
+.infoModal {
+  max-width: 21rem;
+  align-items: stretch;
+}
+
+.infoModal .modalTitle {
+  text-align: left;
+}
+
+.infoList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.infoItemTitle {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.infoItemDesc {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+  line-height: 1.6;
+}
+
 /* ── 작별인사 작성 모달 (전체 화면) ── */
 .commentModalOverlay {
   position: fixed;

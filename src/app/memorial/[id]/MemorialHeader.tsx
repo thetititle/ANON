@@ -1,9 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { QRCodeCanvas } from 'qrcode.react'
 import styles from './memorial.module.css'
+
+const ONBOARDING_KEY = 'anon-onboarding-seen'
 
 function BackIcon() {
   return (
@@ -37,14 +39,31 @@ function AnonIcon() {
   )
 }
 
+function InfoIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 11v5M12 7.5h.01" />
+    </svg>
+  )
+}
+
 export default function MemorialHeader({ isOwner, isLoggedIn }: { isOwner: boolean; isLoggedIn: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [showModal, setShowModal] = useState(false)
+  const [showInfo, setShowInfo] = useState(false)
   const [copied, setCopied] = useState(false)
   const qrRef = useRef<HTMLDivElement>(null)
   const pressTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const pageUrl = typeof window !== 'undefined' ? window.location.href : ''
+
+  useEffect(() => {
+    if (!localStorage.getItem(ONBOARDING_KEY)) {
+      setShowInfo(true)
+      localStorage.setItem(ONBOARDING_KEY, '1')
+    }
+  }, [])
 
   async function copyUrl() {
     await navigator.clipboard.writeText(window.location.href)
@@ -91,6 +110,12 @@ export default function MemorialHeader({ isOwner, isLoggedIn }: { isOwner: boole
               <ShareIcon />
             </button>
           </div>
+          <div className={styles.headerItem}>
+            <span className={styles.headerLabel}>안내</span>
+            <button className={styles.headerIconBtn} onClick={() => { setShowInfo(true); setMenuOpen(false) }} aria-label="안내">
+              <InfoIcon />
+            </button>
+          </div>
           {isLoggedIn && (
             <div className={styles.headerItem}>
               <span className={styles.headerLabel}>로그아웃</span>
@@ -129,6 +154,30 @@ export default function MemorialHeader({ isOwner, isLoggedIn }: { isOwner: boole
             <p className={styles.qrSaveHint}>꾹 누르거나 두 번 클릭하면 저장돼요</p>
             <button className={styles.modalCopyBtn} onClick={copyUrl}>
               {copied ? '복사됨' : 'URL 복사'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showInfo && (
+        <div className={styles.modalOverlay} onClick={() => setShowInfo(false)}>
+          <div className={`${styles.modal} ${styles.infoModal}`} onClick={e => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <p className={styles.modalTitle}>안온을 더 깊이 느껴보세요</p>
+              <button className={styles.modalXBtn} onClick={() => setShowInfo(false)}>✕</button>
+            </div>
+            <div className={styles.infoList}>
+              <div className={styles.infoItem}>
+                <p className={styles.infoItemTitle}>시간의 흐름을 담은 배경</p>
+                <p className={styles.infoItemDesc}>지금 이 시간에 맞춰 페이지의 배경이 천천히 바뀌어요.</p>
+              </div>
+              <div className={styles.infoItem}>
+                <p className={styles.infoItemTitle}>49재, 빛이 되는 날</p>
+                <p className={styles.infoItemDesc}>고인이 떠난 지 49일째 되는 날, 페이지가 따뜻한 빛의 테마로 바뀌어요.</p>
+              </div>
+            </div>
+            <button className={styles.modalCopyBtn} onClick={() => setShowInfo(false)}>
+              확인했어요
             </button>
           </div>
         </div>
