@@ -56,6 +56,7 @@ export default function MemorialList({ initialList }: { initialList: Memorial[] 
   const [menuId, setMenuId] = useState<string | null>(null)
   const [confirmId, setConfirmId] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!menuId) return
@@ -66,13 +67,18 @@ export default function MemorialList({ initialList }: { initialList: Memorial[] 
 
   async function handleDelete(id: string) {
     setDeleting(true)
+    setDeleteError(null)
     try {
       const supabase = createClient()
       const { data: files } = await supabase.storage.from('memorial-media').list(id)
       if (files && files.length > 0) {
         await supabase.storage.from('memorial-media').remove(files.map(f => `${id}/${f.name}`))
       }
-      await supabase.from('memorials').delete().eq('id', id)
+      const { error } = await supabase.from('memorials').delete().eq('id', id)
+      if (error) {
+        setDeleteError('삭제하지 못했어요. 다시 시도해주세요.')
+        return
+      }
       const next = list.filter(m => m.id !== id)
       setList(next)
       setConfirmId(null)
@@ -92,10 +98,11 @@ export default function MemorialList({ initialList }: { initialList: Memorial[] 
                 <p className={styles.deleteConfirmText}>
                   정말 삭제하시겠어요?<br />삭제 후에는 복구할 수 없어요.
                 </p>
+                {deleteError && <p className={styles.deleteError}>{deleteError}</p>}
                 <div className={styles.deleteConfirmActions}>
                   <button
                     className={styles.deleteCancelBtn}
-                    onClick={() => setConfirmId(null)}
+                    onClick={() => { setConfirmId(null); setDeleteError(null) }}
                     disabled={deleting}
                   >취소</button>
                   <button

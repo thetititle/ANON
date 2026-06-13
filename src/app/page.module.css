@@ -241,6 +241,12 @@
   margin-bottom: 0.875rem;
 }
 
+.deleteError {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: #E53E3E;
+  margin-bottom: 0.875rem;
+}
+
 .deleteConfirmActions {
   display: flex;
   gap: 0.5rem;
