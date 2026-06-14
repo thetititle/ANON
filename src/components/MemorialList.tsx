@@ -132,6 +132,7 @@ export default function MemorialList({ initialList }: { initialList: Memorial[] 
                       className={styles.menuBtn}
                       onClick={() => setMenuId(null)}
                       aria-label="수정하기"
+                      prefetch={false}
                     >
                       <EditIcon />
                     </Link>
@@ -164,7 +165,7 @@ export default function MemorialList({ initialList }: { initialList: Memorial[] 
           </li>
         ))}
       </ul>
-      <Link href="/create" className={styles.newMemorialBtn}>새 추모 공간 만들기</Link>
+      <Link href="/create" className={styles.newMemorialBtn} prefetch={false}>새 추모 공간 만들기</Link>
       <SiteFab isLoggedIn />
     </div>
   )
