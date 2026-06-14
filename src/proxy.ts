@@ -12,6 +12,7 @@ export async function proxy(request: NextRequest) {
   }
 
   let supabaseResponse = NextResponse.next({ request })
+  let refreshed = false
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -20,6 +21,7 @@ export async function proxy(request: NextRequest) {
       cookies: {
         getAll() { return request.cookies.getAll() },
         setAll(cookiesToSet) {
+          refreshed = true
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
           supabaseResponse = NextResponse.next({ request })
           cookiesToSet.forEach(({ name, value, options }) =>
@@ -29,14 +31,27 @@ export async function proxy(request: NextRequest) {
     }
   )
 
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user }, error } = await supabase.auth.getUser()
+
+  // TEMP DEBUG: 프로덕션에서 세션이 끊기는 문제 진단용. 원인 파악 후 제거.
+  const debugCookieNames = request.cookies.getAll().map(c => c.name).join(',')
 
   if (!user && request.nextUrl.pathname.startsWith('/create')) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     url.searchParams.set('next', request.nextUrl.pathname)
-    return NextResponse.redirect(url)
+    const res = NextResponse.redirect(url)
+    res.headers.set('x-debug-user', 'none')
+    res.headers.set('x-debug-error', error?.message ?? 'none')
+    res.headers.set('x-debug-refreshed', String(refreshed))
+    res.headers.set('x-debug-cookies', debugCookieNames)
+    return res
   }
+
+  supabaseResponse.headers.set('x-debug-user', user?.id ?? 'none')
+  supabaseResponse.headers.set('x-debug-error', error?.message ?? 'none')
+  supabaseResponse.headers.set('x-debug-refreshed', String(refreshed))
+  supabaseResponse.headers.set('x-debug-cookies', debugCookieNames)
 
   return supabaseResponse
 }
