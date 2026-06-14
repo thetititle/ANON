@@ -3,6 +3,14 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export async function proxy(request: NextRequest) {
+  // Next.js Link의 자동 prefetch 요청은 통과시킨다.
+  // prefetch 요청에서도 getUser()가 refresh token을 사용해 토큰을 갱신하면,
+  // 거의 동시에 도착하는 실제 페이지 요청과 refresh token rotation이 경쟁해
+  // 한쪽이 "이미 사용된 refresh token" 오류로 세션이 끊기는 문제가 있었다.
+  if (request.headers.get('next-router-prefetch') || request.headers.get('purpose') === 'prefetch') {
+    return NextResponse.next()
+  }
+
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
