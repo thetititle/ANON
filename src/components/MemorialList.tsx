@@ -112,6 +112,7 @@ export default function MemorialList({ initialList }: { initialList: Memorial[] 
                   href={`/memorial/${m.id}`}
                   className={styles.cardLink}
                   aria-label={m.deceased_name}
+                  prefetch={false}
                 />
                 <div className={styles.cardInfo}>
                   <span className={styles.cardName}>{m.deceased_name}</span>
