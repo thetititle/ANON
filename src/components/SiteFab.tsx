@@ -73,7 +73,7 @@ export default function SiteFab({ isLoggedIn, items = [] }: { isLoggedIn: boolea
           {isLoggedIn && (
             <div className={styles.fabItem}>
               <span className={styles.fabLabel}>로그아웃</span>
-              <Link href="/logout" className={styles.fabIconBtn} aria-label="로그아웃" onClick={() => setMenuOpen(false)}>
+              <Link href="/logout" prefetch={false} className={styles.fabIconBtn} aria-label="로그아웃" onClick={() => setMenuOpen(false)}>
                 <LogoutIcon />
               </Link>
             </div>
