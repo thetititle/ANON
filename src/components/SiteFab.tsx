@@ -1,11 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState, type ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import InfoOverlay from './InfoOverlay'
 import styles from './siteFab.module.css'
-
-const ONBOARDING_KEY = 'anon-onboarding-seen'
 
 export type FabMenuItem = {
   key: string
@@ -43,15 +41,6 @@ function LogoutIcon() {
 export default function SiteFab({ isLoggedIn, items = [] }: { isLoggedIn: boolean; items?: FabMenuItem[] }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [showInfo, setShowInfo] = useState(false)
-  const [infoInitialView, setInfoInitialView] = useState<'menu' | 'about'>('menu')
-
-  useEffect(() => {
-    if (!localStorage.getItem(ONBOARDING_KEY)) {
-      setInfoInitialView('about')
-      setShowInfo(true)
-      localStorage.setItem(ONBOARDING_KEY, '1')
-    }
-  }, [])
 
   return (
     <>
@@ -77,7 +66,7 @@ export default function SiteFab({ isLoggedIn, items = [] }: { isLoggedIn: boolea
           ))}
           <div className={styles.fabItem}>
             <span className={styles.fabLabel}>안내</span>
-            <button className={styles.fabIconBtn} onClick={() => { setInfoInitialView('menu'); setShowInfo(true); setMenuOpen(false) }} aria-label="안내">
+            <button className={styles.fabIconBtn} onClick={() => { setShowInfo(true); setMenuOpen(false) }} aria-label="안내">
               <InfoIcon />
             </button>
           </div>
@@ -99,7 +88,7 @@ export default function SiteFab({ isLoggedIn, items = [] }: { isLoggedIn: boolea
         </button>
       </div>
 
-      <InfoOverlay open={showInfo} onClose={() => setShowInfo(false)} isLoggedIn={isLoggedIn} initialView={infoInitialView} />
+      <InfoOverlay open={showInfo} onClose={() => setShowInfo(false)} isLoggedIn={isLoggedIn} />
     </>
   )
 }
