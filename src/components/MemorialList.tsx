@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import { getDay49Status } from '@/lib/day49'
+import SiteFab from '@/components/SiteFab'
 import styles from '@/app/page.module.css'
 
 type Memorial = { id: string; deceased_name: string; passed_at: string; relationship: string }
@@ -42,20 +44,13 @@ function CloseIcon() {
   )
 }
 
-function LogoutIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" />
-    </svg>
-  )
-}
-
 export default function MemorialList({ initialList }: { initialList: Memorial[] }) {
   const router = useRouter()
   const [list, setList] = useState(initialList)
   const [menuId, setMenuId] = useState<string | null>(null)
   const [confirmId, setConfirmId] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!menuId) return
@@ -66,13 +61,18 @@ export default function MemorialList({ initialList }: { initialList: Memorial[] 
 
   async function handleDelete(id: string) {
     setDeleting(true)
+    setDeleteError(null)
     try {
       const supabase = createClient()
       const { data: files } = await supabase.storage.from('memorial-media').list(id)
       if (files && files.length > 0) {
         await supabase.storage.from('memorial-media').remove(files.map(f => `${id}/${f.name}`))
       }
-      await supabase.from('memorials').delete().eq('id', id)
+      const { error } = await supabase.from('memorials').delete().eq('id', id)
+      if (error) {
+        setDeleteError('삭제하지 못했어요. 다시 시도해주세요.')
+        return
+      }
       const next = list.filter(m => m.id !== id)
       setList(next)
       setConfirmId(null)
@@ -92,10 +92,11 @@ export default function MemorialList({ initialList }: { initialList: Memorial[] 
                 <p className={styles.deleteConfirmText}>
                   정말 삭제하시겠어요?<br />삭제 후에는 복구할 수 없어요.
                 </p>
+                {deleteError && <p className={styles.deleteError}>{deleteError}</p>}
                 <div className={styles.deleteConfirmActions}>
                   <button
                     className={styles.deleteCancelBtn}
-                    onClick={() => setConfirmId(null)}
+                    onClick={() => { setConfirmId(null); setDeleteError(null) }}
                     disabled={deleting}
                   >취소</button>
                   <button
@@ -107,10 +108,22 @@ export default function MemorialList({ initialList }: { initialList: Memorial[] 
               </div>
             ) : (
               <div className={styles.memorialCard}>
-                <Link href={`/memorial/${m.id}`} className={styles.cardLink} aria-label={m.deceased_name} />
+                <Link
+                  href={`/memorial/${m.id}`}
+                  className={styles.cardLink}
+                  aria-label={m.deceased_name}
+                />
                 <div className={styles.cardInfo}>
                   <span className={styles.cardName}>{m.deceased_name}</span>
-                  <span className={styles.cardMeta}>{m.relationship} · {m.passed_at.replace(/-/g, '.')}</span>
+                  <span className={styles.cardMeta}>
+                    {m.relationship} · {m.passed_at.replace(/-/g, '.')}
+                    {(() => {
+                      const day49 = getDay49Status(m.passed_at)
+                      return day49.state === 'before'
+                        ? <> · <span className={styles.cardDday}>49재까지 D-{day49.daysLeft}</span></>
+                        : null
+                    })()}
+                  </span>
                 </div>
                 {menuId === m.id ? (
                   <div className={styles.inlineActions}>
@@ -152,11 +165,7 @@ export default function MemorialList({ initialList }: { initialList: Memorial[] 
         ))}
       </ul>
       <Link href="/create" className={styles.newMemorialBtn}>새 추모 공간 만들기</Link>
-      <div className={styles.fixedActions}>
-        <Link href="/logout" className={styles.fixedActionBtn} aria-label="로그아웃">
-          <LogoutIcon />
-        </Link>
-      </div>
+      <SiteFab isLoggedIn />
     </div>
   )
 }

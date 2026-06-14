@@ -18,6 +18,20 @@
   margin: 0;
 }
 
+.warning {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: #C0392B;
+  text-align: right;
+  margin: 0;
+}
+
+.filled {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
 .actions {
   display: flex;
   gap: 8px;

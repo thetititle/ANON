@@ -8,7 +8,7 @@ export default function LandingPage() {
   const router = useRouter()
 
   useEffect(() => {
-    const t = setTimeout(() => router.replace('/login'), 3100)
+    const t = setTimeout(() => router.replace('/login'), 3700)
     return () => clearTimeout(t)
   }, [router])
 
@@ -20,6 +20,7 @@ export default function LandingPage() {
           <p className={styles.hanja}>安溫</p>
         </div>
         <p className={`${styles.desc} ${styles.landingDesc}`}>소중한 분을 기억하는 공간</p>
+        <p className={`${styles.desc} ${styles.landingFeature}`}>추억을 기록하고, 마음을 전해요</p>
       </div>
     </main>
   )

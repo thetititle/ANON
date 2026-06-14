@@ -35,6 +35,7 @@ function LoginForm() {
           {error === 'auth_failed' ? '로그인 중 오류가 발생했어요. 다시 시도해주세요.' : '잠시 후 다시 시도해주세요.'}
         </p>
       )}
+      <p className={styles.notice}>로그인 정보는 추모 공간 관리 목적으로만 사용돼요.</p>
     </>
   )
 }
@@ -47,7 +48,7 @@ export default function LoginPage() {
         <p className={styles.hanja}>安溫</p>
       </div>
       <p className={styles.desc}>
-        추모 공간을 만들기 위해<br />본인 확인이 필요해요.
+        소중한 분을 위한 공간을 안전하게 지키기 위해<br />간단한 로그인이 필요해요.
       </p>
       <Suspense>
         <LoginForm />

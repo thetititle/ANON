@@ -217,7 +217,10 @@ export default function CreatePage() {
             )}
 
             {step.type === 'media' && (
-              <MediaUpload onComplete={(v) => complete(step.id, v)} />
+              <MediaUpload
+                onComplete={(v) => complete(step.id, v)}
+                onChange={(v) => update(step.id, v)}
+              />
             )}
 
             {step.type === 'search' && step.options && (

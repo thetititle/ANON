@@ -1,8 +1,8 @@
 'use client'
 
-import Link from 'next/link'
 import { useRef, useState } from 'react'
 import { QRCodeCanvas } from 'qrcode.react'
+import SiteFab, { type FabMenuItem } from '@/components/SiteFab'
 import styles from './memorial.module.css'
 
 function BackIcon() {
@@ -21,24 +21,7 @@ function ShareIcon() {
   )
 }
 
-function LogoutIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" />
-    </svg>
-  )
-}
-
-function AnonIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="8" />
-    </svg>
-  )
-}
-
 export default function MemorialHeader({ isOwner, isLoggedIn }: { isOwner: boolean; isLoggedIn: boolean }) {
-  const [menuOpen, setMenuOpen] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [copied, setCopied] = useState(false)
   const qrRef = useRef<HTMLDivElement>(null)
@@ -69,45 +52,15 @@ export default function MemorialHeader({ isOwner, isLoggedIn }: { isOwner: boole
     if (pressTimer.current) clearTimeout(pressTimer.current)
   }
 
+  const items: FabMenuItem[] = []
+  if (isOwner) {
+    items.push({ key: 'list', label: '목록', icon: <BackIcon />, href: '/' })
+  }
+  items.push({ key: 'share', label: '공유', icon: <ShareIcon />, onClick: () => setShowModal(true) })
+
   return (
     <>
-      {menuOpen && (
-        <div className={styles.fabOverlay} onClick={() => setMenuOpen(false)} />
-      )}
-
-      <header className={`${styles.memorialHeader} ${menuOpen ? styles.memorialHeaderOpen : ''}`}>
-        <div className={`${styles.headerActions} ${menuOpen ? styles.headerActionsOpen : ''}`}>
-          {isOwner && (
-            <div className={styles.headerItem}>
-              <span className={styles.headerLabel}>목록</span>
-              <Link href="/" className={styles.headerIconBtn} aria-label="목록으로" onClick={() => setMenuOpen(false)}>
-                <BackIcon />
-              </Link>
-            </div>
-          )}
-          <div className={styles.headerItem}>
-            <span className={styles.headerLabel}>공유</span>
-            <button className={styles.headerIconBtn} onClick={() => { setShowModal(true); setMenuOpen(false) }} aria-label="공유">
-              <ShareIcon />
-            </button>
-          </div>
-          {isLoggedIn && (
-            <div className={styles.headerItem}>
-              <span className={styles.headerLabel}>로그아웃</span>
-              <Link href="/logout" className={styles.headerIconBtn} aria-label="로그아웃" onClick={() => setMenuOpen(false)}>
-                <LogoutIcon />
-              </Link>
-            </div>
-          )}
-        </div>
-        <button
-          className={styles.headerIconBtn}
-          onClick={() => setMenuOpen(o => !o)}
-          aria-label={menuOpen ? '메뉴 닫기' : '메뉴 열기'}
-        >
-          <AnonIcon />
-        </button>
-      </header>
+      <SiteFab isLoggedIn={isLoggedIn} items={items} />
 
       {showModal && (
         <div className={styles.modalOverlay} onClick={() => setShowModal(false)}>

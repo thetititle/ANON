@@ -100,12 +100,46 @@ a {
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'SimKyungha';
+  src: url('/fonts/SimKyungha.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'YunChorokwoosanEoriniMinguk';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408@1.0/YoonChildfundkoreaMinGuk.woff2') format('woff2');
+  font-weight: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'KyoboHandwriting2019';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/KyoboHand.woff') format('woff');
+  font-weight: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'OngleipKonkon';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2412-1@1.0/Ownglyph_corncorn-Rg.woff2') format('woff2');
+  font-weight: normal;
+  font-display: swap;
+}
+
 /* 변수 */
 
 :root {
   /* 배경 */
   --background: #FAF8F5;
   --surface: #F2EDE6;
+
+  /* 시간대(data-time)와 무관하게 항상 고정되는 기본 색상 — 추모목록/고인 메시지 오버레이에서 사용 */
+  --background-base: #FAF8F5;
+  --foreground-base: #2C2825;
+  --foreground-muted-base: #8C8076;
 
   /* 테두리 */
   --border: #DDD6CB;
@@ -138,6 +172,9 @@ a {
   :root {
     --background: #1A1715;
     --surface: #252220;
+    --background-base: #1A1715;
+    --foreground-base: #EDE8E3;
+    --foreground-muted-base: #8C8076;
     --border: #3D3733;
     --foreground: #EDE8E3;
     --foreground-muted: #8C8076;
