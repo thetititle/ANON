@@ -12,10 +12,7 @@ import MemorialHeader from './MemorialHeader'
 import CondolenceSection from './CondolenceSection'
 import MemorialSwiper from './MemorialSwiper'
 import MessageOverlay from './MessageOverlay'
-import MobileOnlyNotice from './MobileOnlyNotice'
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
-  ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
+import PCBanner from './PCBanner'
 
 type Props = { params: Promise<{ id: string }> }
 
@@ -44,10 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function MemorialPage({ params }: Props) {
   const { id } = await params
-
-  if (!(await isMobileDevice())) {
-    return <MobileOnlyNotice url={`${siteUrl}/memorial/${id}`} />
-  }
+  const isMobile = await isMobileDevice()
 
   const supabase = await createClient()
 
@@ -208,6 +202,7 @@ export default async function MemorialPage({ params }: Props) {
 
   const content = (
     <div className={`${styles.memorialWrapper} ${isLightTheme ? styles.lightWrapper : ''}`}>
+      {!isMobile && <PCBanner />}
       {overlayMessage && (
         <MessageOverlay
           memorialId={id}

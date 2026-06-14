@@ -1063,3 +1063,54 @@
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
 }
 
+/* ── PC 접속 안내 배너 ── */
+
+.pcBanner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  background: color-mix(in srgb, var(--background-base) 85%, transparent);
+  backdrop-filter: blur(0.75rem);
+  border-bottom: 1px solid var(--border);
+}
+
+.pcBannerClose {
+  position: absolute;
+  top: 0.75rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--foreground-muted);
+  cursor: pointer;
+}
+
+.pcBannerText {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground-base);
+  text-align: center;
+}
+
+.pcBannerQr {
+  padding: 0.5rem;
+  background: #fff;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.pcBannerCaption {
+  font: var(--text-sm) 'Pretendard', sans-serif;
+  color: var(--foreground-muted);
+  opacity: 0.7;
+  text-align: center;
+}
+
